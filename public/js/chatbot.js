@@ -61,6 +61,10 @@
       a: ['Os imóveis que vendemos são os que a CosmicLounge comprou e remodelou. Veja os disponíveis em <a href="/imoveis">Imóveis</a> e use o botão «Pedir visita» na página de cada um. Entre particulares não fazemos intermediação.']
     },
     {
+      id: 'trabalhos', kw: { trabalhos: 4, portfolio: 4, antes: 3, depois: 3, exemplos: 3, projetos: 3, realizados: 3, resultados: 3, fotos: 1 },
+      a: ['Pode ver o antes e o depois das casas que já remodelámos em <a href="/trabalhos">Trabalhos realizados</a>. Arraste o cursor sobre as fotografias para comparar.']
+    },
+    {
       id: 'remodelacao', kw: { remodelacao: 4, remodelar: 4, remodelam: 4, obras: 2, renovar: 3, renovacao: 3, acabamentos: 3, qualidade: 2, garantia: 3 },
       a: ['Depois de comprar, a nossa equipa faz a remodelação completa: cozinha, casas de banho, pavimentos, elétrica, canalização e pintura. Só depois o imóvel é colocado à venda, com acabamentos de qualidade.']
     },

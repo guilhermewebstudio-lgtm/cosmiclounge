@@ -1,0 +1,8 @@
+<div class="ba" style="--pos:50%">
+  <div class="ba-layer"><%- include('ba-img', { item: p, state: 'after', img_id: p.after_id }) %></div>
+  <div class="ba-layer ba-before"><%- include('ba-img', { item: p, state: 'before', img_id: p.before_id }) %></div>
+  <span class="ba-tag ba-tag-b">Antes</span>
+  <span class="ba-tag ba-tag-a">Depois</span>
+  <div class="ba-handle" aria-hidden="true"><span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 7-5 5 5 5"/><path d="m15 7 5 5-5 5"/></svg></span></div>
+  <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="Arrastar para comparar o antes e o depois de <%= p.title %>">
+</div>

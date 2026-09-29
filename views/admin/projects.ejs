@@ -1,0 +1,32 @@
+<%- include('../partials/head') %>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap"><h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Trabalhos</h1></div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <%- include('../partials/flash') %>
+    <%- include('../partials/admin-nav') %>
+    <p style="margin-bottom:22px"><a class="btn btn-gold btn-sm" href="/admin/trabalhos/novo">Novo trabalho</a> <a class="btn btn-ghost btn-sm" href="/trabalhos" target="_blank" rel="noopener" data-no-transition>Ver página pública</a></p>
+    <% if (projects.length) { %>
+    <div class="table-wrap">
+      <table class="t">
+        <thead><tr><th>Antes</th><th>Depois</th><th>Título</th><th>Localidade</th><th>Obra</th></tr></thead>
+        <tbody>
+          <% projects.forEach(p => { %>
+            <tr>
+              <td style="width:92px"><div class="sub-thumb" style="width:80px;height:60px"><%- include('../partials/ba-img', { item: p, state: 'before', img_id: p.before_id }) %></div></td>
+              <td style="width:92px"><div class="sub-thumb" style="width:80px;height:60px"><%- include('../partials/ba-img', { item: p, state: 'after', img_id: p.after_id }) %></div></td>
+              <td><a class="row-link" href="/admin/trabalhos/<%= p.id %>"><%= p.title %></a><% if (p.demo) { %> <span class="pill pill-blue" style="margin-left:6px">exemplo</span><% } %></td>
+              <td><%= p.city %></td>
+              <td class="muted"><%= p.weeks ? p.weeks + ' sem.' : '—' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+      <div class="empty"><h3>Ainda não há trabalhos</h3><p>Publique o primeiro antes e depois.</p></div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

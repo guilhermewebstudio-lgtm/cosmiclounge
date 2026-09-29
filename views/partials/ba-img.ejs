@@ -1,0 +1,7 @@
+<div class="cover">
+<% if (img_id) { %>
+  <img src="/img/<%= img_id %>" alt="<%= state === 'before' ? 'Antes da obra' : 'Depois da obra' %>: <%= item.title %>" loading="lazy">
+<% } else { %>
+  <%- include('ba-art', { item: item, state: state }) %>
+<% } %>
+</div>

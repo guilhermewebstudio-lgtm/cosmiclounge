@@ -307,12 +307,39 @@
     }
   }
 
+  /* ---------- Comparador antes/depois ---------- */
+  function compare() {
+    if (hasGsap() && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+    var all = document.querySelectorAll('.ba');
+    all.forEach(function (box) {
+      var range = box.querySelector('.ba-range');
+      if (!range) return;
+      var set = function (v) { box.style.setProperty('--pos', v + '%'); range.value = v; };
+      range.addEventListener('input', function () { box.style.setProperty('--pos', range.value + '%'); box._touched = true; });
+      // pequeno gesto de convite quando entra no ecrã (só uma vez)
+      if (hasGsap() && window.ScrollTrigger && !reduce) {
+        ScrollTrigger.create({
+          trigger: box, start: 'top 75%', once: true,
+          onEnter: function () {
+            if (box._touched) return;
+            var o = { v: 50 };
+            gsap.timeline()
+              .to(o, { v: 30, duration: .8, ease: 'power2.inOut', onUpdate: function () { if (!box._touched) set(o.v); } })
+              .to(o, { v: 70, duration: 1.1, ease: 'power2.inOut', onUpdate: function () { if (!box._touched) set(o.v); } })
+              .to(o, { v: 50, duration: .8, ease: 'power2.inOut', onUpdate: function () { if (!box._touched) set(o.v); } });
+          }
+        });
+      }
+    });
+  }
+
   /* ---------- Arranque ---------- */
   function boot() {
     starfield();
     header();
     bindLinks();
     extras();
+    compare();
     var hadCurtain = root.classList.contains('has-curtain');
     if (root.classList.contains('has-intro')) {
       intro(function () { pageEnter(); });

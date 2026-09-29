@@ -270,6 +270,109 @@ router.post('/imagens/:id(\\d+)/apagar', async (req, res, next) => {
   }
 });
 
+// ---- Trabalhos (antes/depois) ---------------------------------------------
+
+const projFiles = upload.fields([{ name: 'antes', maxCount: 1 }, { name: 'depois', maxCount: 1 }]);
+const BEFORE = `(SELECT id FROM images WHERE owner_type='project_before' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS before_id`;
+const AFTER = `(SELECT id FROM images WHERE owner_type='project_after' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS after_id`;
+
+function projectFromBody(b) {
+  return {
+    title: clean(b.title, 150),
+    city: clean(b.city, 80),
+    tipo: TIPOS.includes(b.tipo) ? b.tipo : 'Apartamento',
+    area: toInt(b.area),
+    weeks: toInt(b.weeks),
+    description: clean(b.description, 3000),
+    works: clean(b.works, 800)
+  };
+}
+
+async function replaceImage(kind, id, file) {
+  if (!file) return;
+  await pool.query('DELETE FROM images WHERE owner_type=$1 AND owner_id=$2', [kind, id]);
+  await pool.query('INSERT INTO images (owner_type, owner_id, mime, data, position) VALUES ($1,$2,$3,$4,0)', [kind, id, file.mimetype, file.buffer]);
+}
+
+router.get('/trabalhos', async (req, res, next) => {
+  try {
+    const { rows: projects } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER} FROM projects p ORDER BY p.id DESC`);
+    res.render('admin/projects', { title: 'Trabalhos', page: 'admin', adminPage: 'trabalhos', projects });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/trabalhos/novo', (req, res) => {
+  res.render('admin/project-form', { title: 'Novo trabalho', page: 'admin', adminPage: 'trabalhos', form: {}, isNew: true, tipos: TIPOS });
+});
+
+router.post('/trabalhos', projFiles, async (req, res, next) => {
+  try {
+    const d = projectFromBody(req.body);
+    if (!d.title || !d.city) {
+      return res.status(400).render('admin/project-form', {
+        title: 'Novo trabalho', page: 'admin', adminPage: 'trabalhos', form: d, isNew: true, tipos: TIPOS,
+        flash: { type: 'error', text: 'Título e localidade são obrigatórios.' }
+      });
+    }
+    const { rows } = await pool.query(
+      'INSERT INTO projects (title, city, tipo, area, weeks, description, works) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id',
+      [d.title, d.city, d.tipo, d.area, d.weeks, d.description, d.works]
+    );
+    const f = req.files || {};
+    await replaceImage('project_before', rows[0].id, f.antes && f.antes[0]);
+    await replaceImage('project_after', rows[0].id, f.depois && f.depois[0]);
+    req.session.flash = { type: 'ok', text: 'Trabalho publicado.' };
+    res.redirect(`/admin/trabalhos/${rows[0].id}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/trabalhos/:id(\\d+)', async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER} FROM projects p WHERE p.id = $1`, [req.params.id]);
+    if (!rows[0]) return next();
+    res.render('admin/project-form', { title: 'Editar trabalho', page: 'admin', adminPage: 'trabalhos', form: rows[0], isNew: false, tipos: TIPOS });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/trabalhos/:id(\\d+)', projFiles, async (req, res, next) => {
+  try {
+    const d = projectFromBody(req.body);
+    const id = req.params.id;
+    if (!d.title || !d.city) {
+      req.session.flash = { type: 'error', text: 'Título e localidade são obrigatórios.' };
+      return res.redirect(`/admin/trabalhos/${id}`);
+    }
+    await pool.query(
+      'UPDATE projects SET title=$1, city=$2, tipo=$3, area=$4, weeks=$5, description=$6, works=$7 WHERE id=$8',
+      [d.title, d.city, d.tipo, d.area, d.weeks, d.description, d.works, id]
+    );
+    const f = req.files || {};
+    await replaceImage('project_before', id, f.antes && f.antes[0]);
+    await replaceImage('project_after', id, f.depois && f.depois[0]);
+    req.session.flash = { type: 'ok', text: 'Trabalho guardado.' };
+    res.redirect(`/admin/trabalhos/${id}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/trabalhos/:id(\\d+)/apagar', async (req, res, next) => {
+  try {
+    await pool.query(`DELETE FROM images WHERE owner_type IN ('project_before','project_after') AND owner_id=$1`, [req.params.id]);
+    await pool.query('DELETE FROM projects WHERE id = $1', [req.params.id]);
+    req.session.flash = { type: 'ok', text: 'Trabalho apagado.' };
+    res.redirect('/admin/trabalhos');
+  } catch (err) {
+    next(err);
+  }
+});
+
 // ---- Mensagens -----------------------------------------------------------
 
 router.get('/mensagens', async (req, res, next) => {

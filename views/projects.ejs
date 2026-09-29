@@ -1,0 +1,54 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="wrap">
+    <h1>Trabalhos realizados</h1>
+    <p class="lead">Cada casa conta uma história de transformação. Arraste o cursor sobre a fotografia para comparar o antes e o depois.</p>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <% if (projects.length) { %>
+    <div class="works">
+      <% projects.forEach((p, i) => { const list = (p.works || '').split(',').map(s => s.trim()).filter(Boolean); %>
+      <article class="work <%= i % 2 ? 'is-flip' : '' %>">
+        <div class="work-media"><%- include('partials/ba', { p: p }) %></div>
+        <div class="work-info">
+          <span class="lcard-city"><%- ico('pin', 15) %><%= p.city %> · <%= p.tipo %></span>
+          <h2><%= p.title %></h2>
+          <% if (p.description) { %><p class="muted" style="white-space:pre-line"><%= p.description %></p><% } %>
+          <% if (p.area || p.weeks) { %>
+          <dl class="work-facts">
+            <% if (p.area) { %><div><dt>Área</dt><dd><%= p.area %> m²</dd></div><% } %>
+            <% if (p.weeks) { %><div><dt>Duração da obra</dt><dd><%= p.weeks %> <%= p.weeks === 1 ? 'semana' : 'semanas' %></dd></div><% } %>
+          </dl>
+          <% } %>
+          <% if (list.length) { %>
+          <ul class="features" style="margin:18px 0 0"><% list.forEach(w => { %><li><%- ico('check', 18) %><span><%= w %></span></li><% }) %></ul>
+          <% } %>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+    <% } else { %>
+      <div class="empty"><h3>Os primeiros trabalhos chegam em breve</h3><p>Estamos a preparar as fotografias das nossas obras.</p></div>
+    <% } %>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="wrap">
+    <div class="cta">
+      <div>
+        <h2>Tem uma casa que precisa de obras?</h2>
+        <p class="lead">Nós compramos, remodelamos e devolvemos-lhe valor. Peça a sua proposta sem compromisso.</p>
+        <div class="cta-actions">
+          <a class="btn btn-gold" href="/vender">Vender a minha casa</a>
+          <a class="btn btn-ghost" href="/imoveis">Ver imóveis à venda</a>
+        </div>
+      </div>
+      <img src="/img/logo-mark.png" alt="" loading="lazy">
+    </div>
+  </div>
+</section>
+<%- include('partials/foot') %>

@@ -1,0 +1,53 @@
+<%
+  const _id = item.id || 0;
+  const _t = item.tipo || 'Apartamento';
+%>
+<% if (state === 'before') { %>
+<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Ilustração do imóvel antes da obra">
+  <defs>
+    <linearGradient id="bb<%= _id %>" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b3140"/><stop offset="1" stop-color="#171b26"/></linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bb<%= _id %>)"/>
+  <g fill="#8a93a6" opacity=".35"><circle cx="60" cy="50" r="1.2"/><circle cx="330" cy="40" r="1"/><circle cx="350" cy="120" r="1.2"/></g>
+  <g fill="none" stroke="#7d8798" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="7 5">
+  <% if (_t === 'Apartamento') { %>
+    <path d="M128 262V96h144v166M108 262h184"/>
+    <path d="M152 126h30M218 126h30M152 166h30M218 166h30M152 206h30M218 206h30" stroke-dasharray="none" stroke-width="2"/>
+    <path d="M188 262v-32h24v32"/>
+  <% } else { %>
+    <path d="M200 74 296 154H274V262H126V154H104Z"/>
+    <path d="M174 262V206h52v56M240 176h20v24h-20Z" stroke-dasharray="none" stroke-width="2.2"/>
+  <% } %>
+  </g>
+  <g fill="none" stroke="#a5adbd" stroke-width="1.6" stroke-linecap="round" opacity=".75">
+    <path d="M232 100 L222 132 L238 148 L226 176"/>
+    <path d="M152 126 L182 156M182 126 L152 156" stroke="#6b7385"/>
+    <path d="M150 222 l18 -6 l14 7"/>
+  </g>
+</svg>
+<% } else { %>
+<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Ilustração do imóvel depois da obra">
+  <defs>
+    <linearGradient id="ba<%= _id %>" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1a3a70"/><stop offset="1" stop-color="#08132a"/></linearGradient>
+    <linearGradient id="bg<%= _id %>" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e7bd"/><stop offset=".5" stop-color="#d4af6a"/><stop offset="1" stop-color="#a97f3a"/></linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#ba<%= _id %>)"/>
+  <g fill="#f1dba5">
+    <circle cx="46" cy="52" r="1.6" opacity=".8"/><circle cx="110" cy="30" r="1.1" opacity=".6"/><circle cx="330" cy="46" r="1.8" opacity=".85"/>
+    <circle cx="368" cy="118" r="1.1" opacity=".6"/><circle cx="72" cy="140" r="1.2" opacity=".55"/>
+    <path transform="translate(310 78)" d="M0-9 L2-2 L9 0 L2 2 L0 9 L-2 2 L-9 0 L-2-2Z" opacity=".95"/>
+    <path transform="translate(96 84) scale(.6)" d="M0-9 L2-2 L9 0 L2 2 L0 9 L-2 2 L-9 0 L-2-2Z" opacity=".8"/>
+  </g>
+  <ellipse cx="200" cy="210" rx="215" ry="64" fill="none" stroke="url(#bg<%= _id %>)" stroke-width="1.2" opacity=".4" transform="rotate(-14 200 210)"/>
+  <g fill="none" stroke="url(#bg<%= _id %>)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+  <% if (_t === 'Apartamento') { %>
+    <path d="M128 262V96h144v166M108 262h184"/>
+    <path d="M152 126h30M218 126h30M152 166h30M218 166h30M152 206h30M218 206h30" stroke-width="2"/>
+    <path d="M188 262v-32h24v32"/>
+  <% } else { %>
+    <path d="M200 74 296 154H274V262H126V154H104Z"/>
+    <path d="M174 262V206h52v56M240 176h20v24h-20Z" stroke-width="2.2"/>
+  <% } %>
+  </g>
+</svg>
+<% } %>

@@ -1,0 +1,58 @@
+<%- include('../partials/head') %>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/admin/trabalhos">Trabalhos</a> / <%= isNew ? 'Novo' : 'Editar' %></div>
+    <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)"><%= isNew ? 'Novo trabalho' : 'Editar trabalho' %></h1>
+  </div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="max-width:900px">
+    <%- include('../partials/flash') %>
+    <form method="post" action="<%= isNew ? '/admin/trabalhos' : '/admin/trabalhos/' + form.id %>" enctype="multipart/form-data">
+      <div class="panel">
+        <div class="field"><label for="title">Título *</label><input class="input" id="title" name="title" required maxlength="150" value="<%= form.title || '' %>" placeholder="Ex.: T2 em Benfica, de fachada degradada a casa de luz"></div>
+        <div class="grid-2">
+          <div class="field"><label for="city">Localidade *</label><input class="input" id="city" name="city" required maxlength="80" value="<%= form.city || '' %>"></div>
+          <div class="field"><label for="tipo">Tipo</label>
+            <select class="input" id="tipo" name="tipo"><% tipos.forEach(t => { %><option value="<%= t %>" <%= form.tipo === t ? 'selected' : '' %>><%= t %></option><% }) %></select>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label for="area">Área (m²)</label><input class="input" id="area" name="area" inputmode="numeric" value="<%= form.area || '' %>"></div>
+          <div class="field"><label for="weeks">Duração da obra (semanas)</label><input class="input" id="weeks" name="weeks" inputmode="numeric" value="<%= form.weeks || '' %>"></div>
+        </div>
+        <div class="field"><label for="description">O que encontrámos e o que fizemos</label><textarea class="input" id="description" name="description" maxlength="3000"><%= form.description || '' %></textarea></div>
+        <div class="field"><label for="works">Trabalhos feitos</label><input class="input" id="works" name="works" maxlength="800" value="<%= form.works || '' %>"><span class="hint">Separados por vírgulas. Ex.: Cozinha nova, Pavimento, Pintura completa</span></div>
+      </div>
+
+      <div class="panel">
+        <h3>Fotografias</h3>
+        <p class="muted" style="margin-bottom:18px">Use fotografias do mesmo ângulo, para o antes e o depois ficarem alinhados. JPG, PNG ou WebP até 3 MB.<% if (!isNew) { %> Deixe vazio para manter a fotografia atual.<% } %></p>
+        <div class="grid-2">
+          <div class="field">
+            <label for="antes">Antes</label>
+            <% if (!isNew) { %><div class="sub-thumb" style="width:100%;height:150px;margin-bottom:8px"><%- include('../partials/ba-img', { item: form, state: 'before', img_id: form.before_id }) %></div><% } %>
+            <input class="input" type="file" id="antes" name="antes" accept="image/jpeg,image/png,image/webp">
+          </div>
+          <div class="field">
+            <label for="depois">Depois</label>
+            <% if (!isNew) { %><div class="sub-thumb" style="width:100%;height:150px;margin-bottom:8px"><%- include('../partials/ba-img', { item: form, state: 'after', img_id: form.after_id }) %></div><% } %>
+            <input class="input" type="file" id="depois" name="depois" accept="image/jpeg,image/png,image/webp">
+          </div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:24px">
+        <button class="btn btn-gold" type="submit"><%= isNew ? 'Publicar trabalho' : 'Guardar alterações' %></button>
+        <a class="btn btn-ghost" href="/admin/trabalhos">Cancelar</a>
+      </div>
+    </form>
+
+    <% if (!isNew) { %>
+      <form method="post" action="/admin/trabalhos/<%= form.id %>/apagar" style="margin-top:40px" onsubmit="return confirm('Apagar este trabalho? Esta ação não pode ser desfeita.')">
+        <button class="btn btn-danger btn-sm" type="submit">Apagar trabalho</button>
+      </form>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

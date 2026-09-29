@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=3">
+  <link rel="stylesheet" href="/css/style.css?v=5">
   <script>
     (function () {
       var d = document.documentElement;
@@ -33,7 +33,7 @@
     })();
   </script>
 </head>
-<body class="page-<%= _page %>">
+<body class="page-<%= _page %><%= user ? ' is-in' : '' %>">
 <a class="sr-only" href="#main">Saltar para o conteúdo</a>
 <canvas id="starfield" aria-hidden="true"></canvas>
 
@@ -61,6 +61,7 @@
     </a>
     <nav class="nav-links" id="navLinks" aria-label="Principal">
       <a href="/imoveis" class="<%= _page === 'imoveis' ? 'is-active' : '' %>">Imóveis</a>
+      <a href="/trabalhos" class="<%= _page === 'trabalhos' ? 'is-active' : '' %>">Trabalhos</a>
       <a href="/#como-funciona" data-hash>Como funciona</a>
       <a href="/sobre" class="<%= _page === 'sobre' ? 'is-active' : '' %>">Sobre nós</a>
       <a href="/contacto" class="<%= _page === 'contacto' ? 'is-active' : '' %>">Contacto</a>

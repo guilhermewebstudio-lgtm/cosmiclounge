@@ -116,6 +116,23 @@
   </div>
 </section>
 
+<% if (project) { %>
+<section class="section-tight" id="antes-depois">
+  <div class="wrap">
+    <div class="work">
+      <div class="work-media"><%- include('partials/ba', { p: project }) %></div>
+      <div class="work-info">
+        <span class="lcard-city"><%- ico('pin', 15) %><%= project.city %> · <%= project.tipo %></span>
+        <h2>Veja a transformação</h2>
+        <p class="lead" style="font-size:1.1rem"><%= project.title %></p>
+        <p class="muted">Arraste o cursor para comparar o antes e o depois. Cada casa que compramos é remodelada pela nossa equipa antes de ir para o mercado.</p>
+        <p style="margin-top:22px"><a class="btn btn-ghost" href="/trabalhos">Ver todos os trabalhos</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+<% } %>
+
 <section class="section" id="sobre-nos">
   <div class="wrap about-grid">
     <div>
