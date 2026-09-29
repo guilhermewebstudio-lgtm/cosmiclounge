@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=1">
+  <link rel="stylesheet" href="/css/style.css?v=3">
   <script>
     (function () {
       var d = document.documentElement;
@@ -65,15 +65,21 @@
       <a href="/sobre" class="<%= _page === 'sobre' ? 'is-active' : '' %>">Sobre nós</a>
       <a href="/contacto" class="<%= _page === 'contacto' ? 'is-active' : '' %>">Contacto</a>
       <% if (user) { %>
-        <a href="/conta" class="<%= _page === 'conta' ? 'is-active' : '' %>">A minha conta</a>
         <% if (user.role === 'admin') { %><a href="/admin" class="<%= _page === 'admin' ? 'is-active' : '' %>">Painel</a><% } %>
-        <form method="post" action="/logout" class="inline"><button type="submit" class="logout-btn">Terminar sessão</button></form>
+        <a href="/conta" class="drawer-only <%= _page === 'conta' ? 'is-active' : '' %>">A minha conta</a>
+        <form method="post" action="/logout" class="inline drawer-only"><button type="submit" class="logout-btn">Terminar sessão</button></form>
       <% } else { %>
-        <a href="/login" class="<%= _page === 'login' ? 'is-active' : '' %>">Entrar</a>
+        <a href="/login" class="drawer-only <%= _page === 'login' ? 'is-active' : '' %>">Entrar</a>
       <% } %>
       <a class="btn btn-gold btn-sm only-drawer" href="/vender">Vender a minha casa</a>
     </nav>
     <div class="nav-actions">
+      <% if (user) { %>
+        <a class="btn btn-ghost btn-sm nav-auth" href="/conta"><%- ico('user', 16) %>A minha conta</a>
+        <form method="post" action="/logout" class="inline nav-auth"><button type="submit" class="btn btn-ghost btn-sm">Sair</button></form>
+      <% } else { %>
+        <a class="btn btn-ghost btn-sm nav-auth nav-login" href="/login"><%- ico('user', 16) %>Entrar</a>
+      <% } %>
       <a class="btn btn-gold btn-sm nav-cta" href="/vender">Vender a minha casa</a>
       <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks"><%- ico('menu', 22) %></button>
     </div>

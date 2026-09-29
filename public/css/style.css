@@ -546,3 +546,19 @@ table.t a.row-link { color: var(--gold-300); border-bottom: 1px solid var(--line
 .brand-art .ring.r2 { width: 92%; height: auto; aspect-ratio: 1; }
 .brand-art .ring.r3 { width: 128%; height: auto; aspect-ratio: 1; }
 .nowrap { white-space: nowrap; }
+
+/* Entrar / Sair mais visíveis */
+.drawer-only { display: none; }
+.nav-auth { display: inline-flex; }
+.nav-login { border-color: var(--gold-500); color: var(--gold-100); background: rgba(212, 175, 106, .1); }
+.nav-login:hover { background: rgba(212, 175, 106, .2); }
+.nav-actions form.nav-auth .btn { border-color: var(--gold-500); color: var(--gold-100); }
+@media (max-width: 860px) {
+  .drawer-only { display: block; }
+  form.drawer-only { display: block; }
+  .nav-auth { display: none !important; }
+}
+.nav-actions a.nav-auth { border-color: var(--gold-500); color: var(--gold-100); }
+@media (max-width: 860px) {
+  .nav-links a.drawer-only, .nav-links form.drawer-only .logout-btn { display: inline-flex; padding: 10px 26px; border: 1px solid var(--gold-500); border-radius: 999px; font-family: var(--ui); font-size: 1rem; color: var(--gold-100); }
+}
