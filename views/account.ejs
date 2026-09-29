@@ -1,0 +1,38 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="wrap">
+    <h1>Olá, <%= user.name.split(' ')[0] %></h1>
+    <p class="lead">Aqui pode acompanhar os imóveis que submeteu à CosmicLounge.</p>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <%- include('partials/flash') %>
+    <div class="section-foot" style="margin-bottom:26px">
+      <h2 style="font-size:clamp(1.8rem,3vw,2.4rem)">Os meus pedidos</h2>
+      <a class="btn btn-gold" href="/vender">Submeter um imóvel</a>
+    </div>
+    <% if (subs.length) { %>
+      <div class="sub-list">
+        <% subs.forEach(s => { const st = util.STATUS[s.status] || util.STATUS.recebido; %>
+          <a class="sub-row" href="/conta/pedidos/<%= s.id %>">
+            <div class="sub-thumb"><%- include('partials/cover', { item: { id: s.id, tipo: s.tipo, cover_id: s.cover_id }, alt: '' }) %></div>
+            <div>
+              <h3><%= s.tipo %> em <%= s.city %></h3>
+              <div class="muted">Pedido #<%= s.id %>, enviado a <%= new Date(s.created_at).toLocaleDateString('pt-PT') %><% if (s.offer_price) { %>, proposta de <%= euro.format(s.offer_price) %><% } %></div>
+            </div>
+            <span class="pill pill-<%= st.tone %>"><%= st.label %></span>
+          </a>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <h3>Ainda não submeteu nenhum imóvel</h3>
+        <p>Preencha o formulário e receba a nossa proposta em 48 horas úteis.</p>
+        <p style="margin-top:20px"><a class="btn btn-gold" href="/vender">Vender a minha casa</a></p>
+      </div>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/foot') %>

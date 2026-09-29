@@ -1,0 +1,75 @@
+<%- include('../partials/head') %>
+<%
+  const _st = STATUS[sub.status] || STATUS.recebido;
+%>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/admin">Painel</a> / Pedido #<%= sub.id %></div>
+    <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)"><%= sub.tipo %> em <%= sub.city %></h1>
+    <p style="margin-top:12px"><span class="pill pill-<%= _st.tone %>"><%= _st.label %></span></p>
+  </div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start" id="adminSub">
+    <div>
+      <%- include('../partials/flash') %>
+      <div class="panel">
+        <h3>Cliente</h3>
+        <dl class="kv">
+          <dt>Nome</dt><dd><%= sub.user_name %></dd>
+          <dt>Email</dt><dd><a href="mailto:<%= sub.user_email %>" class="row-link" style="color:var(--gold-300)"><%= sub.user_email %></a></dd>
+          <% if (sub.user_phone) { %><dt>Telemóvel</dt><dd><a href="tel:<%= sub.user_phone %>"><%= sub.user_phone %></a></dd><% } %>
+        </dl>
+      </div>
+      <div class="panel">
+        <h3>Imóvel</h3>
+        <dl class="kv">
+          <dt>Tipo</dt><dd><%= sub.tipo %></dd>
+          <dt>Localidade</dt><dd><%= sub.city %></dd>
+          <% if (sub.address) { %><dt>Morada</dt><dd><%= sub.address %></dd><% } %>
+          <% if (sub.area) { %><dt>Área</dt><dd><%= sub.area %> m²</dd><% } %>
+          <% if (sub.bedrooms != null) { %><dt>Quartos</dt><dd><%= sub.bedrooms %></dd><% } %>
+          <% if (sub.bathrooms != null) { %><dt>Casas de banho</dt><dd><%= sub.bathrooms %></dd><% } %>
+          <% if (sub.condition) { %><dt>Estado</dt><dd><%= sub.condition %></dd><% } %>
+          <% if (sub.asking_price) { %><dt>Preço pretendido</dt><dd><%= euro.format(sub.asking_price) %></dd><% } %>
+          <% if (sub.description) { %><dt>Descrição</dt><dd style="white-space:pre-line"><%= sub.description %></dd><% } %>
+          <dt>Submetido em</dt><dd><%= new Date(sub.created_at).toLocaleString('pt-PT') %></dd>
+        </dl>
+      </div>
+      <% if (images.length) { %>
+      <div class="panel"><h3>Fotografias</h3>
+        <div class="photos"><% images.forEach(im => { %><a href="/img/<%= im.id %>" target="_blank" rel="noopener" data-no-transition><img src="/img/<%= im.id %>" alt="" loading="lazy"></a><% }) %></div>
+      </div>
+      <% } %>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Atualizar pedido</h3>
+        <form method="post" action="/admin/pedidos/<%= sub.id %>">
+          <div class="field"><label for="status">Estado</label>
+            <select class="input" id="status" name="status">
+              <% allStatus.forEach(k => { %><option value="<%= k %>" <%= sub.status === k ? 'selected' : '' %>><%= STATUS[k].label %></option><% }) %>
+            </select>
+          </div>
+          <div class="field"><label for="offer_price">Proposta de compra (€)</label><input class="input" id="offer_price" name="offer_price" inputmode="numeric" value="<%= sub.offer_price || '' %>"></div>
+          <div class="field"><label for="admin_note">Mensagem para o cliente</label><textarea class="input" id="admin_note" name="admin_note" maxlength="2000"><%= sub.admin_note || '' %></textarea><span class="hint">Aparece na conta do cliente e no email, se o enviar.</span></div>
+          <label class="check" style="margin-bottom:18px"><input type="checkbox" name="notify" value="1" checked> Notificar o cliente por email</label>
+          <button class="btn btn-gold btn-block" type="submit">Guardar</button>
+        </form>
+      </div>
+      <div class="panel">
+        <h3>Publicar no site</h3>
+        <% if (published.length) { %>
+          <p class="muted">Já publicado:</p>
+          <% published.forEach(p => { %><p><a class="row-link" style="color:var(--gold-300)" href="/admin/imoveis/<%= p.id %>"><%= p.title %></a></p><% }) %>
+        <% } else { %>
+          <p class="muted">Depois da remodelação, crie o anúncio com os dados deste pedido.</p>
+          <a class="btn btn-ghost" href="/admin/imoveis/novo?pedido=<%= sub.id %>">Criar anúncio</a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+<style>@media (max-width: 900px) { #adminSub { grid-template-columns: 1fr !important; } }</style>
+<%- include('../partials/foot') %>

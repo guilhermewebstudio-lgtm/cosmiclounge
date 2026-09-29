@@ -1,0 +1,5 @@
+<nav class="admin-tabs" aria-label="Painel">
+  <a href="/admin" class="<%= adminPage === 'pedidos' ? 'is-on' : '' %>">Pedidos de venda<% if (locals.counts && counts.por_tratar) { %> <span class="count"><%= counts.por_tratar %></span><% } %></a>
+  <a href="/admin/imoveis" class="<%= adminPage === 'imoveis' ? 'is-on' : '' %>">Imóveis</a>
+  <a href="/admin/mensagens" class="<%= adminPage === 'mensagens' ? 'is-on' : '' %>">Mensagens<% if (locals.counts && counts.mensagens) { %> <span class="count"><%= counts.mensagens %></span><% } %></a>
+</nav>

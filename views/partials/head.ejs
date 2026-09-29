@@ -1,0 +1,83 @@
+<%
+  const _title = locals.title ? (locals.page === 'home' ? locals.title + ' — CosmicLounge' : locals.title + ' · CosmicLounge') : 'CosmicLounge — Compra e venda de imóveis';
+  const _desc = locals.desc || 'A CosmicLounge compra o seu imóvel, remodela-o e volta a colocá-lo no mercado. Proposta em 48 horas úteis, sem intermediários.';
+  const _page = locals.page || '';
+  const _bare = locals.bare === true;
+%><!doctype html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= _title %></title>
+  <meta name="description" content="<%= _desc %>">
+  <meta name="theme-color" content="#060e1d">
+  <meta property="og:title" content="<%= _title %>">
+  <meta property="og:description" content="<%= _desc %>">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="<%= siteUrl %>/img/logo-lockup.png">
+  <link rel="icon" type="image/png" href="/img/favicon-64.png">
+  <link rel="apple-touch-icon" href="/img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=1">
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      setTimeout(function () { d.classList.remove('has-intro', 'has-curtain'); }, 9000);
+      try {
+        if (!sessionStorage.getItem('cl_intro')) d.classList.add('has-intro');
+        else if (sessionStorage.getItem('cl_t') === '1') d.classList.add('has-curtain');
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body class="page-<%= _page %>">
+<a class="sr-only" href="#main">Saltar para o conteúdo</a>
+<canvas id="starfield" aria-hidden="true"></canvas>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-stars" id="introStars"></div>
+  <div class="intro-inner">
+    <img class="intro-mark" id="introMark" src="/img/logo-mark.png" alt="">
+    <div class="intro-word" id="introWord"><span class="b">COSMIC</span><span>LOUNGE</span></div>
+    <div class="intro-line" id="introLine"></div>
+    <p class="intro-tag" id="introTag">Compra e venda de imóveis</p>
+  </div>
+</div>
+
+<div class="curtain" id="curtain" aria-hidden="true">
+  <div class="curtain-panel"></div><div class="curtain-panel"></div><div class="curtain-panel"></div><div class="curtain-panel"></div><div class="curtain-panel"></div>
+  <div class="curtain-mark"><img src="/img/logo-mark.png" alt=""></div>
+</div>
+
+<% if (!_bare) { %>
+<header class="site-header" id="header">
+  <div class="wrap nav">
+    <a class="brand" href="/" aria-label="CosmicLounge — página inicial">
+      <img src="/img/logo-mark.png" alt="">
+      <span class="brand-word"><strong>COSMIC</strong>LOUNGE</span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Principal">
+      <a href="/imoveis" class="<%= _page === 'imoveis' ? 'is-active' : '' %>">Imóveis</a>
+      <a href="/#como-funciona" data-hash>Como funciona</a>
+      <a href="/sobre" class="<%= _page === 'sobre' ? 'is-active' : '' %>">Sobre nós</a>
+      <a href="/contacto" class="<%= _page === 'contacto' ? 'is-active' : '' %>">Contacto</a>
+      <% if (user) { %>
+        <a href="/conta" class="<%= _page === 'conta' ? 'is-active' : '' %>">A minha conta</a>
+        <% if (user.role === 'admin') { %><a href="/admin" class="<%= _page === 'admin' ? 'is-active' : '' %>">Painel</a><% } %>
+        <form method="post" action="/logout" class="inline"><button type="submit" class="logout-btn">Terminar sessão</button></form>
+      <% } else { %>
+        <a href="/login" class="<%= _page === 'login' ? 'is-active' : '' %>">Entrar</a>
+      <% } %>
+      <a class="btn btn-gold btn-sm only-drawer" href="/vender">Vender a minha casa</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-gold btn-sm nav-cta" href="/vender">Vender a minha casa</a>
+      <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks"><%- ico('menu', 22) %></button>
+    </div>
+  </div>
+</header>
+<% } %>
+<main id="main">

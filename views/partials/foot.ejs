@@ -1,0 +1,84 @@
+</main>
+
+<% const _bareF = locals.bare === true; %>
+<% if (!_bareF) { %>
+<footer class="site-footer">
+  <div class="wrap footer-top">
+    <div class="footer-brand">
+      <img src="/img/logo-lockup.png" alt="CosmicLounge — compra e venda de imóveis">
+      <p>Compramos, remodelamos e vendemos imóveis. Transparência do primeiro contacto até à escritura.</p>
+      <div class="social">
+        <% if (company.social.instagram) { %><a href="<%= company.social.instagram %>" aria-label="Instagram" rel="noopener"><%- ico('instagram', 19) %></a><% } %>
+        <% if (company.social.facebook) { %><a href="<%= company.social.facebook %>" aria-label="Facebook" rel="noopener"><%- ico('facebook', 19) %></a><% } %>
+        <% if (company.social.linkedin) { %><a href="<%= company.social.linkedin %>" aria-label="LinkedIn" rel="noopener"><%- ico('linkedin', 19) %></a><% } %>
+      </div>
+    </div>
+    <div>
+      <h4>Navegação</h4>
+      <ul class="footer-links">
+        <li><a href="/">Início</a></li>
+        <li><a href="/imoveis">Imóveis remodelados</a></li>
+        <li><a href="/#como-funciona" data-hash>Como funciona</a></li>
+        <li><a href="/sobre">Sobre nós</a></li>
+        <li><a href="/contacto">Contacto</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Para vendedores</h4>
+      <ul class="footer-links">
+        <li><a href="/vender">Vender o meu imóvel</a></li>
+        <li><a href="/conta">Acompanhar o meu pedido</a></li>
+        <li><a href="/#perguntas" data-hash>Perguntas frequentes</a></li>
+        <li><a href="/login">Entrar</a></li>
+        <li><a href="/registo">Criar conta</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Fale connosco</h4>
+      <ul class="footer-contact">
+        <li><%- ico('pin', 18) %><span><%= company.address %></span></li>
+        <li><%- ico('phone', 18) %><a href="tel:<%= company.phoneHref %>"><%= company.phone %></a></li>
+        <li><%- ico('mail', 18) %><a href="mailto:<%= company.email %>"><%= company.email %></a></li>
+        <li><%- ico('clock', 18) %><span><%= company.hours %></span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-giant" aria-hidden="true">CosmicLounge</div>
+  <div class="footer-bottom">
+    <div class="wrap" style="display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;width:min(var(--wrap),100% - 48px)">
+      <span>© <%= new Date().getFullYear() %> CosmicLounge. Todos os direitos reservados.</span>
+      <nav>
+        <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener" data-no-transition>Livro de Reclamações</a>
+        <a href="/contacto">Apoio ao cliente</a>
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<div id="chatRoot" data-name="<%= user ? user.name.split(' ')[0] : '' %>">
+  <button class="chat-fab" id="chatFab" type="button" aria-label="Abrir assistente Cosmo" aria-expanded="false">
+    <img src="/img/logo-mark.png" alt=""><span class="dot"></span>
+  </button>
+  <section class="chat" id="chat" role="dialog" aria-label="Assistente Cosmo">
+    <div class="chat-head">
+      <div class="chat-avatar"><img src="/img/logo-mark.png" alt=""></div>
+      <div><strong>Cosmo</strong><small>Assistente da CosmicLounge</small></div>
+      <button class="close" id="chatClose" type="button" aria-label="Fechar"><%- ico('close', 20) %></button>
+    </div>
+    <div class="chat-body" id="chatBody" aria-live="polite"></div>
+    <div class="quick" id="chatQuick"></div>
+    <form class="chat-form" id="chatForm" autocomplete="off">
+      <input id="chatInput" type="text" placeholder="Escreva a sua pergunta…" maxlength="300" aria-label="Mensagem">
+      <button type="submit" aria-label="Enviar"><%- ico('send', 18) %></button>
+    </form>
+  </section>
+</div>
+<% } %>
+
+<% if (!_bareF) { %><script>window.__co = <%- JSON.stringify({ phone: company.phone, email: company.email, hours: company.hours }).replace(/</g, '\\u003c') %>;</script><% } %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+<script src="/js/app.js?v=1" defer></script>
+<% if (!_bareF) { %><script src="/js/chatbot.js?v=1" defer></script><% } %>
+</body>
+</html>

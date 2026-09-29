@@ -1,0 +1,74 @@
+<%- include('partials/head') %>
+<section class="page-hero" style="padding-bottom:30px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/imoveis">Imóveis</a> / <%= listing.city %></div>
+    <%- include('partials/flash') %>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap detail-grid">
+    <div>
+      <div class="gallery-main" id="galleryMain">
+        <% if (images.length) { %>
+          <div class="cover"><img id="galleryImg" src="/img/<%= images[0].id %>" alt="<%= listing.title %>"></div>
+        <% } else { %>
+          <%- include('partials/cover', { item: listing, alt: listing.title }) %>
+        <% } %>
+      </div>
+      <% if (images.length > 1) { %>
+      <div class="gallery-thumbs">
+        <% images.forEach((im, i) => { %>
+          <button type="button" class="<%= i === 0 ? 'is-on' : '' %>" data-src="/img/<%= im.id %>" aria-label="Fotografia <%= i + 1 %>"><img src="/img/<%= im.id %>" alt="" loading="lazy"></button>
+        <% }) %>
+      </div>
+      <% } %>
+
+      <div style="margin-top:44px">
+        <h3 style="margin-bottom:14px">Sobre este imóvel</h3>
+        <p class="measure" style="white-space:pre-line;color:#c4cde0"><%= listing.description || 'Imóvel remodelado pela CosmicLounge. Contacte-nos para mais informações.' %></p>
+        <% if (features.length) { %>
+          <h3 style="margin:30px 0 14px">Características</h3>
+          <ul class="features"><% features.forEach(f => { %><li><%- ico('check', 18) %><span><%= f %></span></li><% }) %></ul>
+        <% } %>
+      </div>
+    </div>
+
+    <aside>
+      <div class="side-card" id="interesse">
+        <span class="lcard-city"><%- ico('pin', 15) %><%= listing.city %> — <%= listing.tipo %></span>
+        <h1 class="detail-title" style="font-size:clamp(1.9rem,3vw,2.6rem);margin:8px 0 14px"><%= listing.title %></h1>
+        <div class="price-big"><%= euro.format(listing.price) %></div>
+        <% if (listing.status === 'reservado') { %><p class="pill pill-gold" style="margin-top:14px">Reservado</p><% } %>
+        <div class="specs">
+          <div><%- ico('area', 22) %><strong><%= listing.area || '—' %></strong><span>m²</span></div>
+          <div><%- ico('bed', 22) %><strong><%= listing.bedrooms != null ? 'T' + listing.bedrooms : '—' %></strong><span>Tipologia</span></div>
+          <div><%- ico('bath', 22) %><strong><%= listing.bathrooms != null ? listing.bathrooms : '—' %></strong><span>Casas de banho</span></div>
+          <div><%- ico('home', 22) %><strong style="font-size:1.1rem;padding-top:5px"><%= listing.tipo %></strong><span>Tipo</span></div>
+        </div>
+
+        <h3 style="font-size:1.5rem">Tenho interesse</h3>
+        <p class="muted">Deixe os seus dados e agendamos uma visita.</p>
+        <form method="post" action="/imoveis/<%= listing.id %>/interesse">
+          <div class="field"><label for="iname">Nome</label><input class="input" id="iname" name="name" required maxlength="100" autocomplete="name"></div>
+          <div class="grid-2">
+            <div class="field"><label for="iemail">Email</label><input class="input" id="iemail" type="email" name="email" required maxlength="150" autocomplete="email"></div>
+            <div class="field"><label for="iphone">Telemóvel</label><input class="input" id="iphone" type="tel" name="phone" maxlength="30" autocomplete="tel"></div>
+          </div>
+          <div class="field"><label for="imsg">Mensagem (opcional)</label><textarea class="input" id="imsg" name="message" maxlength="2000" style="min-height:90px"></textarea></div>
+          <button class="btn btn-gold btn-block" type="submit">Pedir visita</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<% if (related.length) { %>
+<section class="section-tight">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:30px"><h2 style="font-size:clamp(1.8rem,3vw,2.6rem)">Outros imóveis</h2></div>
+    <div class="list-cards"><% related.forEach(l => { %><%- include('partials/lcard', { l: l, variant: '' }) %><% }) %></div>
+  </div>
+</section>
+<% } %>
+<%- include('partials/foot') %>

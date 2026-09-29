@@ -1,0 +1,58 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="wrap">
+    <h1>Vender o meu imóvel</h1>
+    <p class="lead">Quanto mais detalhes e fotografias, mais rápida e precisa é a nossa proposta. Os campos com asterisco são obrigatórios.</p>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="max-width:860px">
+    <%- include('partials/flash') %>
+    <form method="post" action="/vender" enctype="multipart/form-data">
+      <div class="panel">
+        <h3>O imóvel</h3>
+        <div class="grid-2">
+          <div class="field"><label for="tipo">Tipo de imóvel *</label>
+            <select class="input" id="tipo" name="tipo" required>
+              <option value="">Escolha…</option>
+              <% tipos.forEach(t => { %><option value="<%= t %>" <%= form.tipo === t ? 'selected' : '' %>><%= t %></option><% }) %>
+            </select>
+          </div>
+          <div class="field"><label for="city">Localidade *</label><input class="input" id="city" name="city" required maxlength="80" value="<%= form.city || '' %>" placeholder="Ex.: Lisboa"></div>
+        </div>
+        <div class="field"><label for="address">Morada (opcional)</label><input class="input" id="address" name="address" maxlength="200" value="<%= form.address || '' %>"><span class="hint">Só a usamos para avaliar o imóvel.</span></div>
+        <div class="grid-3">
+          <div class="field"><label for="area">Área (m²)</label><input class="input" id="area" name="area" inputmode="numeric" value="<%= form.area || '' %>"></div>
+          <div class="field"><label for="bedrooms">Quartos</label><input class="input" id="bedrooms" name="bedrooms" inputmode="numeric" value="<%= form.bedrooms != null ? form.bedrooms : '' %>"></div>
+          <div class="field"><label for="bathrooms">Casas de banho</label><input class="input" id="bathrooms" name="bathrooms" inputmode="numeric" value="<%= form.bathrooms != null ? form.bathrooms : '' %>"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label for="condition">Estado</label>
+            <select class="input" id="condition" name="condition">
+              <option value="">Escolha…</option>
+              <% condicoes.forEach(c => { %><option value="<%= c %>" <%= form.condition === c ? 'selected' : '' %>><%= c %></option><% }) %>
+            </select>
+          </div>
+          <div class="field"><label for="asking_price">Preço pretendido (€)</label><input class="input" id="asking_price" name="asking_price" inputmode="numeric" value="<%= form.asking_price || '' %>"></div>
+        </div>
+        <div class="field"><label for="description">Descrição</label><textarea class="input" id="description" name="description" maxlength="3000" placeholder="Conte-nos o que é importante saber: obras feitas, problemas conhecidos, situação legal, etc."><%= form.description || '' %></textarea></div>
+      </div>
+
+      <div class="panel">
+        <h3>Fotografias</h3>
+        <label class="drop" id="drop">
+          <%- ico('upload', 28) %>
+          <strong>Arraste as fotografias ou clique para escolher</strong>
+          <span>Até 6 imagens (JPG, PNG ou WebP) com 3 MB cada</span>
+          <span class="drop-names" id="dropNames"></span>
+          <input type="file" name="fotos" id="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+        </label>
+      </div>
+
+      <p class="muted" style="margin:22px 0">Ao submeter, a CosmicLounge fica com os seus dados para avaliar o imóvel e contactá-lo sobre este pedido.</p>
+      <button class="btn btn-gold" type="submit">Enviar pedido</button>
+    </form>
+  </div>
+</section>
+<%- include('partials/foot') %>

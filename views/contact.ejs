@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="wrap">
+    <h1>Fale connosco</h1>
+    <p class="lead">Tem uma dúvida sobre a venda do seu imóvel ou sobre uma das nossas casas? Respondemos o mais depressa possível.</p>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,80px);align-items:start" id="contactGrid">
+    <div>
+      <ul class="footer-contact" style="font-size:1.05rem">
+        <li><%- ico('pin', 20) %><span><%= company.address %></span></li>
+        <li><%- ico('phone', 20) %><a href="tel:<%= company.phoneHref %>"><%= company.phone %></a></li>
+        <li><%- ico('mail', 20) %><a href="mailto:<%= company.email %>"><%= company.email %></a></li>
+        <li><%- ico('clock', 20) %><span><%= company.hours %></span></li>
+      </ul>
+      <p class="muted" style="margin-top:26px">Prefere uma resposta imediata? O assistente Cosmo, no canto do ecrã, responde às perguntas mais comuns a qualquer hora.</p>
+    </div>
+    <div class="panel">
+      <%- include('partials/flash') %>
+      <form method="post" action="/contacto">
+        <div class="grid-2">
+          <div class="field"><label for="cname">Nome</label><input class="input" id="cname" name="name" required maxlength="100" value="<%= form.name || (user ? user.name : '') %>" autocomplete="name"></div>
+          <div class="field"><label for="cemail">Email</label><input class="input" id="cemail" type="email" name="email" required maxlength="150" value="<%= form.email || (user ? user.email : '') %>" autocomplete="email"></div>
+        </div>
+        <div class="field"><label for="cphone">Telemóvel (opcional)</label><input class="input" id="cphone" type="tel" name="phone" maxlength="30" value="<%= form.phone || '' %>" autocomplete="tel"></div>
+        <div class="field"><label for="cmsg">Mensagem</label><textarea class="input" id="cmsg" name="message" required maxlength="2000" minlength="5"><%= form.message || '' %></textarea></div>
+        <button class="btn btn-gold" type="submit">Enviar mensagem</button>
+      </form>
+    </div>
+  </div>
+</section>
+<style>@media (max-width: 900px) { #contactGrid { grid-template-columns: 1fr !important; } }</style>
+<%- include('partials/foot') %>

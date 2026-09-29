@@ -1,0 +1,72 @@
+<%- include('../partials/head') %>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/admin/imoveis">Imóveis</a> / <%= isNew ? 'Novo' : 'Editar' %></div>
+    <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)"><%= isNew ? 'Novo imóvel' : 'Editar imóvel' %></h1>
+  </div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="max-width:900px">
+    <%- include('../partials/flash') %>
+    <form method="post" action="<%= isNew ? '/admin/imoveis' : '/admin/imoveis/' + form.id %>" enctype="multipart/form-data">
+      <input type="hidden" name="submission_id" value="<%= form.submission_id || '' %>">
+      <div class="panel">
+        <div class="field"><label for="title">Título *</label><input class="input" id="title" name="title" required maxlength="150" value="<%= form.title || '' %>"></div>
+        <div class="grid-2">
+          <div class="field"><label for="tipo">Tipo</label>
+            <select class="input" id="tipo" name="tipo"><% tipos.forEach(t => { %><option value="<%= t %>" <%= form.tipo === t ? 'selected' : '' %>><%= t %></option><% }) %></select>
+          </div>
+          <div class="field"><label for="city">Localidade *</label><input class="input" id="city" name="city" required maxlength="80" value="<%= form.city || '' %>"></div>
+        </div>
+        <div class="grid-3">
+          <div class="field"><label for="area">Área (m²)</label><input class="input" id="area" name="area" inputmode="numeric" value="<%= form.area || '' %>"></div>
+          <div class="field"><label for="bedrooms">Quartos</label><input class="input" id="bedrooms" name="bedrooms" inputmode="numeric" value="<%= form.bedrooms != null ? form.bedrooms : '' %>"></div>
+          <div class="field"><label for="bathrooms">Casas de banho</label><input class="input" id="bathrooms" name="bathrooms" inputmode="numeric" value="<%= form.bathrooms != null ? form.bathrooms : '' %>"></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label for="price">Preço de venda (€) *</label><input class="input" id="price" name="price" inputmode="numeric" required value="<%= form.price || '' %>"></div>
+          <div class="field"><label for="status">Estado</label>
+            <select class="input" id="status" name="status"><% Object.keys(LISTING_STATUS).forEach(k => { %><option value="<%= k %>" <%= form.status === k ? 'selected' : '' %>><%= LISTING_STATUS[k] %></option><% }) %></select>
+          </div>
+        </div>
+        <div class="field"><label for="description">Descrição</label><textarea class="input" id="description" name="description" maxlength="4000" style="min-height:160px"><%= form.description || '' %></textarea></div>
+        <div class="field"><label for="features">Características</label><input class="input" id="features" name="features" maxlength="800" value="<%= form.features || '' %>"><span class="hint">Separadas por vírgulas. Ex.: Varanda, Garagem, Ar condicionado</span></div>
+        <label class="check"><input type="checkbox" name="featured" value="1" <%= form.featured ? 'checked' : '' %>> Destacar na página inicial</label>
+      </div>
+
+      <div class="panel">
+        <h3>Fotografias</h3>
+        <% if (images.length) { %>
+          <div class="photos" style="margin-bottom:18px">
+            <% images.forEach(im => { %>
+              <div><img src="/img/<%= im.id %>" alt="">
+                <button type="submit" form="del<%= im.id %>">Remover</button>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+        <label class="drop" id="drop">
+          <%- ico('upload', 28) %>
+          <strong>Adicionar fotografias</strong>
+          <span>Até 6 de cada vez (JPG, PNG ou WebP, 3 MB cada). A primeira é a capa.</span>
+          <span class="drop-names" id="dropNames"></span>
+          <input type="file" name="fotos" id="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+        </label>
+      </div>
+
+      <div class="actions" style="margin-top:24px">
+        <button class="btn btn-gold" type="submit"><%= isNew ? 'Publicar imóvel' : 'Guardar alterações' %></button>
+        <a class="btn btn-ghost" href="/admin/imoveis">Cancelar</a>
+      </div>
+    </form>
+
+    <% images.forEach(im => { %><form id="del<%= im.id %>" method="post" action="/admin/imagens/<%= im.id %>/apagar"></form><% }) %>
+
+    <% if (!isNew) { %>
+      <form method="post" action="/admin/imoveis/<%= form.id %>/apagar" style="margin-top:40px" onsubmit="return confirm('Apagar este imóvel? Esta ação não pode ser desfeita.')">
+        <button class="btn btn-danger btn-sm" type="submit">Apagar imóvel</button>
+      </form>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

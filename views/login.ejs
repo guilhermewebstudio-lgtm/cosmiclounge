@@ -1,0 +1,31 @@
+<% locals.bare = true; %>
+<%- include('partials/head') %>
+<div class="auth">
+  <a class="auth-back brand" href="/" aria-label="Voltar ao início"><img src="/img/logo-mark.png" alt="" style="width:38px"><span class="brand-word"><strong>COSMIC</strong>LOUNGE</span></a>
+  <div class="auth-art">
+    <span class="ring r1"></span><span class="ring r2"></span><span class="ring r3"></span>
+    <div class="auth-art-inner">
+      <img src="/img/logo-mark.png" alt="">
+      <h2>Acompanhe a venda da sua casa</h2>
+      <p>Veja o estado do pedido, receba a proposta e fale com a nossa equipa, tudo num só sítio.</p>
+    </div>
+  </div>
+  <div class="auth-form-side">
+    <div class="auth-card">
+      <h1>Bem-vindo de volta</h1>
+      <p class="muted">Entre na sua conta para continuar.</p>
+      <%- include('partials/flash') %>
+      <form method="post" action="/login" novalidate>
+        <input type="hidden" name="next" value="<%= next %>">
+        <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" name="email" value="<%= form.email || '' %>" required autocomplete="email" autofocus></div>
+        <div class="field">
+          <label for="password">Palavra-passe</label>
+          <div class="pw"><input class="input" id="password" type="password" name="password" required autocomplete="current-password"><button type="button" data-toggle-pw="password" aria-label="Mostrar palavra-passe"><%- ico('eye', 19) %></button></div>
+        </div>
+        <button class="btn btn-gold btn-block" type="submit" style="margin-top:8px">Entrar</button>
+      </form>
+      <p class="auth-alt">Ainda não tem conta? <a href="/registo<%= next ? '?next=' + encodeURIComponent(next) : '' %>">Criar conta</a></p>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

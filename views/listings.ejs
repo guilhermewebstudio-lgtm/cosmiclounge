@@ -1,0 +1,46 @@
+<%- include('partials/head') %>
+<section class="page-hero">
+  <div class="wrap">
+    <h1>Imóveis remodelados</h1>
+    <p class="lead">Casas que a CosmicLounge comprou e renovou de raiz. Prontas a habitar, com acabamentos de qualidade.</p>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <form class="filters" method="get" action="/imoveis">
+      <input class="input" type="search" name="q" value="<%= f.q %>" placeholder="Localidade ou palavra-chave" aria-label="Localidade ou palavra-chave">
+      <select class="input" name="tipo" aria-label="Tipo de imóvel">
+        <option value="">Todos os tipos</option>
+        <% tipos.forEach(t => { %><option value="<%= t %>" <%= f.tipo === t ? 'selected' : '' %>><%= t %></option><% }) %>
+      </select>
+      <select class="input" name="quartos" aria-label="Quartos">
+        <option value="">Quartos</option>
+        <% [1,2,3,4].forEach(n => { %><option value="<%= n %>" <%= String(f.quartos) === String(n) ? 'selected' : '' %>>T<%= n %> ou mais</option><% }) %>
+      </select>
+      <select class="input" name="max" aria-label="Preço máximo">
+        <option value="">Preço máximo</option>
+        <% [250000, 350000, 500000, 750000, 1000000].forEach(v => { %><option value="<%= v %>" <%= String(f.max) === String(v) ? 'selected' : '' %>>até <%= euro.format(v) %></option><% }) %>
+      </select>
+      <select class="input" name="ordem" aria-label="Ordenar">
+        <option value="recentes" <%= f.ordem === 'recentes' ? 'selected' : '' %>>Mais recentes</option>
+        <option value="preco_asc" <%= f.ordem === 'preco_asc' ? 'selected' : '' %>>Preço, do menor</option>
+        <option value="preco_desc" <%= f.ordem === 'preco_desc' ? 'selected' : '' %>>Preço, do maior</option>
+      </select>
+      <button class="btn btn-gold" type="submit">Filtrar</button>
+    </form>
+
+    <% if (listings.length) { %>
+      <p class="muted" style="margin-bottom:20px"><%= listings.length %> <%= listings.length === 1 ? 'imóvel encontrado' : 'imóveis encontrados' %></p>
+      <div class="list-cards">
+        <% listings.forEach(l => { %><%- include('partials/lcard', { l: l, variant: '' }) %><% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <h3>Nenhum imóvel com estes filtros</h3>
+        <p>Experimente alargar a pesquisa ou <a href="/imoveis" class="gold-text">limpar os filtros</a>.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/foot') %>

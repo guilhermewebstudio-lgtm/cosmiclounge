@@ -1,0 +1,27 @@
+<%- include('../partials/head') %>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap"><h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Mensagens</h1></div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="max-width:900px">
+    <%- include('../partials/flash') %>
+    <%- include('../partials/admin-nav') %>
+    <% if (msgs.length) { msgs.forEach(m => { %>
+      <article class="msg <%= m.handled ? 'is-done' : '' %>">
+        <header>
+          <strong><%= m.name %></strong>
+          <span class="muted"><%= new Date(m.created_at).toLocaleString('pt-PT') %></span>
+        </header>
+        <div class="muted" style="font-size:.92rem">
+          <a href="mailto:<%= m.email %>" style="color:var(--gold-300)"><%= m.email %></a><% if (m.phone) { %> — <a href="tel:<%= m.phone %>"><%= m.phone %></a><% } %>
+          <% if (m.listing_title) { %><br>Imóvel: <a href="/imoveis/<%= m.listing_id %>" style="color:var(--gold-300)"><%= m.listing_title %></a><% } %>
+        </div>
+        <p><%= m.message %></p>
+        <form method="post" action="/admin/mensagens/<%= m.id %>/tratada"><button class="btn btn-ghost btn-sm" type="submit"><%= m.handled ? 'Marcar como por tratar' : 'Marcar como tratada' %></button></form>
+      </article>
+    <% }) } else { %>
+      <div class="empty"><h3>Sem mensagens</h3><p>Os pedidos de visita e mensagens de contacto aparecem aqui.</p></div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

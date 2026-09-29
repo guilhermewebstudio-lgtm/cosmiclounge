@@ -1,0 +1,62 @@
+<%- include('partials/head') %>
+<%
+  const st = util.STATUS[sub.status] || util.STATUS.recebido;
+  const order = util.STATUS_ORDER;
+  const idx = order.indexOf(sub.status);
+%>
+<section class="page-hero" style="padding-bottom:30px">
+  <div class="wrap">
+    <div class="crumbs"><a href="/conta">A minha conta</a> / Pedido #<%= sub.id %></div>
+    <h1 style="font-size:clamp(2.2rem,5vw,3.6rem)"><%= sub.tipo %> em <%= sub.city %></h1>
+    <p style="margin-top:14px"><span class="pill pill-<%= st.tone %>"><%= st.label %></span></p>
+  </div>
+</section>
+
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap" style="max-width:940px">
+    <%- include('partials/flash') %>
+    <% if (sub.status !== 'recusado') { %>
+    <div class="timeline" aria-label="Progresso do pedido">
+      <% order.forEach((k, i) => { %>
+        <div class="tl <%= i < idx ? 'done' : '' %> <%= i === idx ? 'now done' : '' %>"><%= util.STATUS[k].label %></div>
+      <% }) %>
+    </div>
+    <% } %>
+
+    <p class="lead" style="margin-bottom:26px"><%= st.text %></p>
+
+    <% if (sub.offer_price) { %>
+      <div class="offer">
+        <span class="muted">Proposta da CosmicLounge</span>
+        <div class="price-big"><%= euro.format(sub.offer_price) %></div>
+      </div>
+    <% } %>
+    <% if (sub.admin_note) { %>
+      <div class="panel"><h3>Mensagem da equipa</h3><p style="white-space:pre-line;margin:0;color:#c4cde0"><%= sub.admin_note %></p></div>
+    <% } %>
+
+    <div class="panel">
+      <h3>Dados do imóvel</h3>
+      <dl class="kv">
+        <dt>Tipo</dt><dd><%= sub.tipo %></dd>
+        <dt>Localidade</dt><dd><%= sub.city %></dd>
+        <% if (sub.address) { %><dt>Morada</dt><dd><%= sub.address %></dd><% } %>
+        <% if (sub.area) { %><dt>Área</dt><dd><%= sub.area %> m²</dd><% } %>
+        <% if (sub.bedrooms != null) { %><dt>Quartos</dt><dd><%= sub.bedrooms %></dd><% } %>
+        <% if (sub.bathrooms != null) { %><dt>Casas de banho</dt><dd><%= sub.bathrooms %></dd><% } %>
+        <% if (sub.condition) { %><dt>Estado</dt><dd><%= sub.condition %></dd><% } %>
+        <% if (sub.asking_price) { %><dt>Preço pretendido</dt><dd><%= euro.format(sub.asking_price) %></dd><% } %>
+        <% if (sub.description) { %><dt>Descrição</dt><dd style="white-space:pre-line"><%= sub.description %></dd><% } %>
+      </dl>
+    </div>
+
+    <% if (images.length) { %>
+      <div class="panel"><h3>Fotografias</h3>
+        <div class="photos"><% images.forEach(im => { %><a href="/img/<%= im.id %>" target="_blank" rel="noopener" data-no-transition><img src="/img/<%= im.id %>" alt="" loading="lazy"></a><% }) %></div>
+      </div>
+    <% } %>
+
+    <p style="margin-top:26px"><a class="btn btn-ghost" href="/contacto">Falar com a equipa</a></p>
+  </div>
+</section>
+<%- include('partials/foot') %>

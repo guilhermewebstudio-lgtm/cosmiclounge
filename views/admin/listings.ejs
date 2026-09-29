@@ -1,0 +1,33 @@
+<%- include('../partials/head') %>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap"><h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Imóveis</h1></div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <%- include('../partials/flash') %>
+    <%- include('../partials/admin-nav') %>
+    <p style="margin-bottom:22px"><a class="btn btn-gold btn-sm" href="/admin/imoveis/novo">Novo imóvel</a></p>
+    <% if (listings.length) { %>
+    <div class="table-wrap">
+      <table class="t">
+        <thead><tr><th></th><th>Título</th><th>Localidade</th><th>Preço</th><th>Estado</th><th></th></tr></thead>
+        <tbody>
+          <% listings.forEach(l => { %>
+            <tr>
+              <td style="width:84px"><div class="sub-thumb" style="width:72px;height:56px"><%- include('../partials/cover', { item: l, alt: '' }) %></div></td>
+              <td><a class="row-link" href="/admin/imoveis/<%= l.id %>"><%= l.title %></a><% if (l.demo) { %> <span class="pill pill-blue" style="margin-left:6px">exemplo</span><% } %></td>
+              <td><%= l.city %></td>
+              <td><%= euro.format(l.price) %></td>
+              <td><span class="pill pill-<%= l.status === 'disponivel' ? 'green' : l.status === 'reservado' ? 'gold' : 'red' %>"><%= LISTING_STATUS[l.status] %></span></td>
+              <td><a class="btn btn-ghost btn-sm" href="/imoveis/<%= l.id %>" target="_blank" rel="noopener" data-no-transition>Ver no site</a></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+      <div class="empty"><h3>Ainda não há imóveis</h3><p>Crie o primeiro anúncio.</p></div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>

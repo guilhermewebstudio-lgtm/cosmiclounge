@@ -1,0 +1,35 @@
+<%
+  const _id = item.id || 0;
+  const _v = _id % 3;
+  const _c = [['#153166', '#0a1730'], ['#1a3a70', '#08132a'], ['#12295a', '#060e1d']][_v];
+  const _tipo = item.tipo || 'Apartamento';
+%>
+<div class="cover">
+<% if (item.cover_id) { %>
+  <img src="/img/<%= item.cover_id %>" alt="<%= locals.alt || '' %>" loading="lazy">
+<% } else { %>
+  <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="<%= locals.alt || 'Imóvel' %>">
+    <defs>
+      <linearGradient id="cg<%= _id %>" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="<%= _c[0] %>"/><stop offset="1" stop-color="<%= _c[1] %>"/></linearGradient>
+      <linearGradient id="cs<%= _id %>" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6e7bd"/><stop offset=".5" stop-color="#d4af6a"/><stop offset="1" stop-color="#a97f3a"/></linearGradient>
+    </defs>
+    <rect width="400" height="300" fill="url(#cg<%= _id %>)"/>
+    <g fill="#f1dba5">
+      <circle cx="46" cy="52" r="1.6" opacity=".8"/><circle cx="110" cy="30" r="1.1" opacity=".6"/><circle cx="330" cy="46" r="1.8" opacity=".85"/>
+      <circle cx="368" cy="118" r="1.1" opacity=".6"/><circle cx="72" cy="140" r="1.2" opacity=".55"/><circle cx="290" cy="24" r="1" opacity=".5"/>
+      <path transform="translate(<%= 300 - _v * 20 %> 74)" d="M0-9 L2-2 L9 0 L2 2 L0 9 L-2 2 L-9 0 L-2-2Z" opacity=".9"/>
+    </g>
+    <ellipse cx="200" cy="210" rx="215" ry="64" fill="none" stroke="url(#cs<%= _id %>)" stroke-width="1.2" opacity=".35" transform="rotate(-14 200 210)"/>
+    <g fill="none" stroke="url(#cs<%= _id %>)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+    <% if (_tipo === 'Apartamento') { %>
+      <path d="M128 262V96h144v166M108 262h184"/>
+      <path d="M152 126h30M218 126h30M152 166h30M218 166h30M152 206h30M218 206h30" stroke-width="2"/>
+      <path d="M188 262v-32h24v32"/>
+    <% } else { %>
+      <path d="M200 74 296 154H274V262H126V154H104Z"/>
+      <path d="M174 262V206h52v56M240 176h20v24h-20Z" stroke-width="2.2"/>
+    <% } %>
+    </g>
+  </svg>
+<% } %>
+</div>

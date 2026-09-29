@@ -1,0 +1,46 @@
+<%- include('../partials/head') %>
+<section class="page-hero" style="padding-bottom:24px">
+  <div class="wrap">
+    <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Painel</h1>
+  </div>
+</section>
+<section class="section-tight" style="padding-top:0">
+  <div class="wrap">
+    <%- include('../partials/flash') %>
+    <%- include('../partials/admin-nav') %>
+    <div class="stats">
+      <div class="stat"><strong><%= counts.por_tratar %></strong><span>Pedidos por tratar</span></div>
+      <div class="stat"><strong><%= counts.pedidos %></strong><span>Pedidos no total</span></div>
+      <div class="stat"><strong><%= counts.imoveis %></strong><span>Imóveis no site</span></div>
+      <div class="stat"><strong><%= counts.mensagens %></strong><span>Mensagens novas</span></div>
+    </div>
+
+    <div class="chips">
+      <a class="chip <%= !filtro ? 'is-on' : '' %>" href="/admin">Todos</a>
+      <% allStatus.forEach(k => { %><a class="chip <%= filtro === k ? 'is-on' : '' %>" href="/admin?estado=<%= k %>"><%= STATUS[k].label %></a><% }) %>
+    </div>
+
+    <% if (subs.length) { %>
+    <div class="table-wrap">
+      <table class="t">
+        <thead><tr><th>#</th><th>Imóvel</th><th>Cliente</th><th>Pretendido</th><th>Estado</th><th>Data</th></tr></thead>
+        <tbody>
+          <% subs.forEach(s => { const st = STATUS[s.status] || STATUS.recebido; %>
+            <tr>
+              <td><a class="row-link" href="/admin/pedidos/<%= s.id %>">#<%= s.id %></a></td>
+              <td><%= s.tipo %> em <%= s.city %></td>
+              <td><%= s.user_name %><br><span class="muted" style="font-size:.85rem"><%= s.user_email %></span></td>
+              <td><%= s.asking_price ? euro.format(s.asking_price) : '—' %></td>
+              <td><span class="pill pill-<%= st.tone %>"><%= st.label %></span></td>
+              <td class="muted"><%= new Date(s.created_at).toLocaleDateString('pt-PT') %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } else { %>
+      <div class="empty"><h3>Sem pedidos</h3><p>Quando alguém submeter um imóvel, aparece aqui.</p></div>
+    <% } %>
+  </div>
+</section>
+<%- include('../partials/foot') %>
