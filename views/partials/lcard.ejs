@@ -2,6 +2,8 @@
   <div class="lcard-media">
     <%- include('cover', { item: l, alt: l.title }) %>
     <% if (l.status === 'reservado') { %><span class="badge badge-res">Reservado</span><% } else { %><span class="badge">Remodelado</span><% } %>
+    <% if (l.photo_count > 1) { %><span class="photo-count" title="<%= l.photo_count %> fotografias"><%- ico('image', 14) %><%= l.photo_count %></span><% } %>
+    <span class="lcard-more" aria-hidden="true"><span>Ver detalhes e fotografias</span></span>
   </div>
   <div class="lcard-body">
     <span class="lcard-city"><%- ico('pin', 15) %><%= l.city %></span>

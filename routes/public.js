@@ -7,12 +7,13 @@ const router = express.Router();
 
 const BEFORE = `(SELECT id FROM images WHERE owner_type='project_before' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS before_id`;
 const AFTER = `(SELECT id FROM images WHERE owner_type='project_after' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS after_id`;
+const PHOTOS = `(SELECT COUNT(*)::int FROM images WHERE owner_type='listing' AND owner_id=l.id) AS photo_count`;
 const COVER = `(SELECT id FROM images WHERE owner_type='listing' AND owner_id=l.id ORDER BY position, id LIMIT 1) AS cover_id`;
 
 router.get('/', async (req, res, next) => {
   try {
     const { rows: featured } = await pool.query(
-      `SELECT l.*, ${COVER} FROM listings l
+      `SELECT l.*, ${COVER}, ${PHOTOS} FROM listings l
        WHERE l.status IN ('disponivel','reservado')
        ORDER BY l.featured DESC, l.id DESC LIMIT 3`
     );
@@ -55,7 +56,7 @@ router.get('/imoveis', async (req, res, next) => {
     const order = { preco_asc: 'l.price ASC', preco_desc: 'l.price DESC', recentes: 'l.id DESC' }[ordem];
 
     const { rows: listings } = await pool.query(
-      `SELECT l.*, ${COVER} FROM listings l WHERE ${where.join(' AND ')} ORDER BY ${order}`,
+      `SELECT l.*, ${COVER}, ${PHOTOS} FROM listings l WHERE ${where.join(' AND ')} ORDER BY ${order}`,
       params
     );
     res.render('listings', {
@@ -72,7 +73,7 @@ router.get('/imoveis', async (req, res, next) => {
 
 router.get('/imoveis/:id(\\d+)', async (req, res, next) => {
   try {
-    const { rows } = await pool.query(`SELECT l.*, ${COVER} FROM listings l WHERE l.id = $1`, [req.params.id]);
+    const { rows } = await pool.query(`SELECT l.*, ${COVER}, ${PHOTOS} FROM listings l WHERE l.id = $1`, [req.params.id]);
     const listing = rows[0];
     if (!listing) return next();
     const { rows: images } = await pool.query(
@@ -80,7 +81,7 @@ router.get('/imoveis/:id(\\d+)', async (req, res, next) => {
       [listing.id]
     );
     const { rows: related } = await pool.query(
-      `SELECT l.*, ${COVER} FROM listings l
+      `SELECT l.*, ${COVER}, ${PHOTOS} FROM listings l
        WHERE l.id <> $1 AND l.status IN ('disponivel','reservado')
        ORDER BY (l.city = $2) DESC, l.id DESC LIMIT 3`,
       [listing.id, listing.city]

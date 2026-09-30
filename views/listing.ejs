@@ -9,20 +9,28 @@
 <section class="section-tight" style="padding-top:32px">
   <div class="wrap detail-grid">
     <div>
-      <div class="gallery-main" id="galleryMain">
-        <% if (images.length) { %>
-          <div class="cover"><img id="galleryImg" src="/img/<%= images[0].id %>" alt="<%= listing.title %>"></div>
-        <% } else { %>
-          <%- include('partials/cover', { item: listing, alt: listing.title }) %>
+      <div class="gallery" id="gallery">
+        <div class="gallery-main" id="galleryMain">
+          <% if (images.length) { %>
+            <div class="cover"><img id="galleryImg" src="/img/<%= images[0].id %>" alt="<%= listing.title %>"></div>
+            <% if (images.length > 1) { %>
+              <button type="button" class="g-arrow g-prev" id="gPrev" aria-label="Fotografia anterior"><%- ico('chevl', 24) %></button>
+              <button type="button" class="g-arrow g-next" id="gNext" aria-label="Fotografia seguinte"><%- ico('chevr', 24) %></button>
+            <% } %>
+            <span class="g-count" id="gCount"><%- ico('image', 15) %><span id="gCountTxt">1 / <%= images.length %></span></span>
+            <button type="button" class="g-zoom" id="gZoom" aria-label="Ver em ecrã inteiro"><%- ico('expand', 18) %><span>Ver em ecrã inteiro</span></button>
+          <% } else { %>
+            <%- include('partials/cover', { item: listing, alt: listing.title }) %>
+          <% } %>
+        </div>
+        <% if (images.length > 1) { %>
+        <div class="gallery-thumbs" id="gThumbs">
+          <% images.forEach((im, i) => { %>
+            <button type="button" class="<%= i === 0 ? 'is-on' : '' %>" data-src="/img/<%= im.id %>" aria-label="Fotografia <%= i + 1 %> de <%= images.length %>"><img src="/img/<%= im.id %>" alt="" loading="lazy"></button>
+          <% }) %>
+        </div>
         <% } %>
       </div>
-      <% if (images.length > 1) { %>
-      <div class="gallery-thumbs">
-        <% images.forEach((im, i) => { %>
-          <button type="button" class="<%= i === 0 ? 'is-on' : '' %>" data-src="/img/<%= im.id %>" aria-label="Fotografia <%= i + 1 %>"><img src="/img/<%= im.id %>" alt="" loading="lazy"></button>
-        <% }) %>
-      </div>
-      <% } %>
 
       <div style="margin-top:44px">
         <h3 style="margin-bottom:14px">Sobre este imóvel</h3>
@@ -31,6 +39,17 @@
           <h3 style="margin:30px 0 14px">Características</h3>
           <ul class="features"><% features.forEach(f => { %><li><%- ico('check', 18) %><span><%= f %></span></li><% }) %></ul>
         <% } %>
+        <h3 style="margin:30px 0 14px">Ficha do imóvel</h3>
+        <dl class="kv ficha">
+          <dt>Referência</dt><dd>CL-<%= String(listing.id).padStart(4, '0') %></dd>
+          <dt>Tipo</dt><dd><%= listing.tipo %></dd>
+          <dt>Localidade</dt><dd><%= listing.city %></dd>
+          <% if (listing.area) { %><dt>Área</dt><dd><%= listing.area %> m²</dd><% } %>
+          <% if (listing.bedrooms != null) { %><dt>Quartos</dt><dd><%= listing.bedrooms %></dd><% } %>
+          <% if (listing.bathrooms != null) { %><dt>Casas de banho</dt><dd><%= listing.bathrooms %></dd><% } %>
+          <dt>Estado</dt><dd>Remodelado pela CosmicLounge</dd>
+          <dt>Disponibilidade</dt><dd><%= listing.status === 'reservado' ? 'Reservado' : 'Disponível' %></dd>
+        </dl>
       </div>
     </div>
 

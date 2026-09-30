@@ -66,21 +66,105 @@
         btn.setAttribute('aria-label', inp.type === 'password' ? 'Mostrar palavra-passe' : 'Esconder palavra-passe');
       });
     });
-    // galeria do imóvel
-    var thumbs = document.querySelectorAll('.gallery-thumbs button');
-    var big = document.getElementById('galleryImg');
-    thumbs.forEach(function (t) {
-      t.addEventListener('click', function () {
-        if (big) big.src = t.getAttribute('data-src');
-        thumbs.forEach(function (o) { o.classList.remove('is-on'); });
-        t.classList.add('is-on');
-      });
-    });
     // âncoras vindas de outra página (ex.: /#como-funciona)
     if (location.hash) {
       var t = document.getElementById(location.hash.slice(1));
       if (t) setTimeout(function () { t.scrollIntoView(); }, 60);
     }
+  }
+
+  /* ---------- Galeria do imóvel (setas, miniaturas e ecrã inteiro) ---------- */
+  function gallery() {
+    var root = document.getElementById('gallery');
+    var big = document.getElementById('galleryImg');
+    if (!root || !big) return;
+    var thumbBtns = Array.prototype.slice.call(root.querySelectorAll('.gallery-thumbs button'));
+    var srcs = thumbBtns.length ? thumbBtns.map(function (t) { return t.getAttribute('data-src'); }) : [big.getAttribute('src')];
+    var total = srcs.length;
+    var countTxt = document.getElementById('gCountTxt');
+    var cur = 0;
+
+    function preload(i) { var im = new Image(); im.src = srcs[(i + total) % total]; }
+    function show(i) {
+      cur = (i + total) % total;
+      big.src = srcs[cur];
+      thumbBtns.forEach(function (t, k) { t.classList.toggle('is-on', k === cur); });
+      if (countTxt) countTxt.textContent = (cur + 1) + ' / ' + total;
+      if (thumbBtns[cur] && thumbBtns[cur].scrollIntoView && total > 6) thumbBtns[cur].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      preload(cur + 1); preload(cur - 1);
+      syncLightbox();
+    }
+
+    // ---- ecrã inteiro ----
+    var lb = document.createElement('div');
+    lb.className = 'lb';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-modal', 'true');
+    lb.setAttribute('aria-label', 'Fotografias do imóvel');
+    lb.innerHTML =
+      '<div class="lb-top"><span><strong id="lbCount"></strong></span><button type="button" class="lb-close" aria-label="Fechar">&times;</button></div>' +
+      '<div class="lb-stage"><img alt="" id="lbImg">' +
+      (total > 1 ? '<button type="button" class="lb-arrow lb-prev" aria-label="Fotografia anterior">&#8249;</button><button type="button" class="lb-arrow lb-next" aria-label="Fotografia seguinte">&#8250;</button>' : '') +
+      '</div>' +
+      (total > 1 ? '<div class="lb-thumbs"></div>' : '');
+    document.body.appendChild(lb);
+    var lbImg = lb.querySelector('#lbImg');
+    var lbCount = lb.querySelector('#lbCount');
+    var lbThumbs = lb.querySelector('.lb-thumbs');
+    if (lbThumbs) {
+      srcs.forEach(function (src, k) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Fotografia ' + (k + 1));
+        b.innerHTML = '<img alt="" loading="lazy" src="' + src + '">';
+        b.addEventListener('click', function () { show(k); });
+        lbThumbs.appendChild(b);
+      });
+    }
+    function syncLightbox() {
+      if (!lb.classList.contains('is-open')) return;
+      lbImg.src = srcs[cur];
+      lbCount.textContent = (cur + 1) + ' / ' + total;
+      if (lbThumbs) Array.prototype.forEach.call(lbThumbs.children, function (b, k) {
+        b.classList.toggle('is-on', k === cur);
+        if (k === cur && b.scrollIntoView) b.scrollIntoView({ block: 'nearest', inline: 'center' });
+      });
+    }
+    function openLb() { lb.classList.add('is-open'); document.body.style.overflow = 'hidden'; syncLightbox(); lb.querySelector('.lb-close').focus(); }
+    function closeLb() { lb.classList.remove('is-open'); document.body.style.overflow = ''; }
+
+    var prev = document.getElementById('gPrev'), next = document.getElementById('gNext'), zoom = document.getElementById('gZoom');
+    if (prev) prev.addEventListener('click', function () { show(cur - 1); });
+    if (next) next.addEventListener('click', function () { show(cur + 1); });
+    thumbBtns.forEach(function (t, k) { t.addEventListener('click', function () { show(k); }); });
+    big.addEventListener('click', openLb);
+    if (zoom) zoom.addEventListener('click', openLb);
+    lb.querySelector('.lb-close').addEventListener('click', closeLb);
+    lb.addEventListener('click', function (e) { if (e.target === lb || e.target.classList.contains('lb-stage')) closeLb(); });
+    var lp = lb.querySelector('.lb-prev'), ln = lb.querySelector('.lb-next');
+    if (lp) lp.addEventListener('click', function () { show(cur - 1); });
+    if (ln) ln.addEventListener('click', function () { show(cur + 1); });
+    document.addEventListener('keydown', function (e) {
+      var open = lb.classList.contains('is-open');
+      if (e.key === 'Escape' && open) closeLb();
+      else if (e.key === 'ArrowLeft' && (open || root.contains(document.activeElement))) show(cur - 1);
+      else if (e.key === 'ArrowRight' && (open || root.contains(document.activeElement))) show(cur + 1);
+    });
+
+    // deslizar com o dedo (na imagem principal e no ecrã inteiro)
+    function swipe(el) {
+      var x0 = null, y0 = null;
+      el.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+      el.addEventListener('touchend', function (e) {
+        if (x0 === null) return;
+        var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+        x0 = null;
+        if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4 && total > 1) show(dx < 0 ? cur + 1 : cur - 1);
+      }, { passive: true });
+    }
+    swipe(document.getElementById('galleryMain'));
+    swipe(lb.querySelector('.lb-stage'));
+    preload(1);
   }
 
   /* ---------- Fotografias: somar, comprimir e mostrar miniaturas ---------- */
@@ -339,6 +423,7 @@
     anchors();
     extras();
     photoPicker();
+    gallery();
     compare();
     reveal();
     counters();
