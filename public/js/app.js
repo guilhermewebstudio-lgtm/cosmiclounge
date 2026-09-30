@@ -5,6 +5,8 @@
   'use strict';
 
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+  function store(k, v) { try { sessionStorage.setItem(k, v); } catch { /* sem sessionStorage */ } }
 
   /* ---------- Cabeçalho e menu ---------- */
   function header() {
@@ -438,8 +440,94 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
+  /* ---------- Intro (1x por sessão, na página inicial) ---------- */
+  function intro() {
+    var el = document.getElementById('intro');
+    if (!el || !root.classList.contains('has-intro')) return;
+    store('cl_intro', '1');
+    var box = document.getElementById('introStars');
+    if (box) {
+      for (var i = 0; i < 42; i++) {
+        var st = document.createElement('i');
+        st.style.left = (Math.random() * 100).toFixed(1) + '%';
+        st.style.top = (Math.random() * 100).toFixed(1) + '%';
+        st.style.animationDelay = (Math.random() * 2.2).toFixed(2) + 's';
+        st.style.setProperty('--s', (1 + Math.random() * 2.2).toFixed(1) + 'px');
+        box.appendChild(st);
+      }
+    }
+    var done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      el.classList.add('is-out');
+      setTimeout(function () { root.classList.remove('hold'); }, 420);
+      setTimeout(function () { root.classList.remove('has-intro'); el.style.display = 'none'; }, 1100);
+    }
+    var timer = setTimeout(finish, 2600);
+    el.addEventListener('click', function () { clearTimeout(timer); finish(); });
+  }
+
+  /* ---------- Transição entre páginas (cortina) ---------- */
+  function transitions() {
+    var curtain = document.getElementById('curtain');
+    if (!curtain || reduce) return;
+
+    // chegada: a cortina já cobre a página e abre
+    if (root.classList.contains('has-curtain')) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          curtain.classList.add('is-lift');
+          setTimeout(function () { root.classList.remove('hold'); }, 230);
+          setTimeout(function () {
+            root.classList.remove('has-curtain');
+            curtain.classList.remove('is-lift');
+            store('cl_t', '0');
+          }, 1150);
+        });
+      });
+    }
+
+    // saída: a cortina fecha e só depois muda de página
+    var leaving = false;
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || a.target === '_blank' || a.hasAttribute('download') || a.hasAttribute('data-no-transition')) return;
+      var url;
+      try { url = new URL(a.href, location.href); } catch { return; }
+      if (url.origin !== location.origin) return;
+      if (url.pathname === location.pathname && url.search === location.search) return;   // âncoras: tratadas à parte
+      if (leaving) { e.preventDefault(); return; }
+      e.preventDefault();
+      leaving = true;
+      document.body.classList.remove('nav-open');
+      store('cl_t', '1');
+      curtain.classList.add('is-active');
+      requestAnimationFrame(function () { requestAnimationFrame(function () { curtain.classList.add('is-cover'); }); });
+      setTimeout(function () { location.href = url.href; }, 760);
+    });
+
+    // voltar atrás (cache do navegador): não deixar a cortina presa
+    window.addEventListener('pageshow', function (ev) {
+      if (!ev.persisted) return;
+      leaving = false;
+      curtain.classList.remove('is-active', 'is-cover', 'is-lift');
+      root.classList.remove('has-curtain', 'has-intro', 'hold');
+    });
+  }
+
+  function whenReleased(fn) {
+    if (!root.classList.contains('hold')) { fn(); return; }
+    var iv = setInterval(function () {
+      if (!root.classList.contains('hold')) { clearInterval(iv); fn(); }
+    }, 120);
+  }
+
   /* ---------- Arranque ---------- */
   function boot() {
+    intro();
+    transitions();
     header();
     anchors();
     extras();
@@ -447,7 +535,7 @@
     gallery();
     compare();
     reveal();
-    counters();
+    whenReleased(counters);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

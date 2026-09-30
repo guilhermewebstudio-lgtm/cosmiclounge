@@ -20,10 +20,37 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=19">
+  <link rel="stylesheet" href="/css/style.css?v=20">
+  <script>
+    (function () {
+      var d = document.documentElement;
+      try {
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          if (location.pathname === '/' && !sessionStorage.getItem('cl_intro')) d.classList.add('has-intro', 'hold');
+          else if (sessionStorage.getItem('cl_t') === '1') d.classList.add('has-curtain', 'hold');
+        }
+      } catch (e) {}
+      setTimeout(function () { d.classList.remove('has-intro', 'has-curtain', 'hold'); }, 7000);
+    })();
+  </script>
 </head>
 <body class="page-<%= _page %><%= user ? ' is-in' : '' %><%= user && user.role === 'admin' ? ' is-admin' : '' %>">
 <a class="sr-only" href="#main">Saltar para o conteúdo</a>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <div class="intro-stars" id="introStars"></div>
+  <div class="intro-inner">
+    <img class="intro-mark" src="/img/logo-mark.png" alt="">
+    <div class="intro-word"><span class="b">COSMIC</span><span>LOUNGE</span></div>
+    <div class="intro-line"></div>
+    <p class="intro-tag">Compra e venda de imóveis</p>
+  </div>
+</div>
+
+<div class="curtain" id="curtain" aria-hidden="true">
+  <div class="curtain-panel" style="--i:0"></div><div class="curtain-panel" style="--i:1"></div><div class="curtain-panel" style="--i:2"></div><div class="curtain-panel" style="--i:3"></div><div class="curtain-panel" style="--i:4"></div>
+  <div class="curtain-mark"><img src="/img/logo-mark.png" alt=""></div>
+</div>
 
 <% if (!_bare) { %>
 <header class="site-header" id="header">
