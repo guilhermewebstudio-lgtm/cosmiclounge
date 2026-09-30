@@ -1,0 +1,3 @@
+<% if (p.before_credit || p.after_credit) { %>
+<p class="work-credit">Fotografias de exemplo de <%= [p.before_credit, p.after_credit].filter((v, i, a) => v && a.indexOf(v) === i).join(' e ') %>, no Unsplash. São de casas diferentes e servem só para ilustrar o antes e o depois.</p>
+<% } %>

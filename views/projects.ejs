@@ -23,6 +23,7 @@
             <% if (p.weeks) { %><div><dt>Duração da obra</dt><dd><%= p.weeks %> <%= p.weeks === 1 ? 'semana' : 'semanas' %></dd></div><% } %>
           </dl>
           <% } %>
+          <%- include('partials/ba-credit', { p: p }) %>
           <% if (list.length) { %>
           <ul class="features" style="margin:18px 0 0"><% list.forEach(w => { %><li><%- ico('check', 18) %><span><%= w %></span></li><% }) %></ul>
           <% } %>

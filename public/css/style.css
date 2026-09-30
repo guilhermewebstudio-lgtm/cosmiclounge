@@ -664,3 +664,5 @@ main { overflow-x: clip; }
 .g-credit { margin: 10px 0 0; font-size: .82rem; color: var(--muted); min-height: 1.2em; }
 .g-credit a { color: var(--ink-2); border-bottom: 1px solid var(--line-2); }
 .g-credit a:hover { color: var(--navy); border-color: var(--gold-500); }
+
+.work-credit { margin: 14px 0 0; font-size: .82rem; color: var(--muted); max-width: 52ch; }

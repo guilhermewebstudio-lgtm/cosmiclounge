@@ -8,6 +8,8 @@ const router = express.Router();
 const BEFORE = `(SELECT id FROM images WHERE owner_type='project_before' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS before_id`;
 const AFTER = `(SELECT id FROM images WHERE owner_type='project_after' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS after_id`;
 const PHOTOS = `(SELECT COUNT(*)::int FROM images WHERE owner_type='listing' AND owner_id=l.id) AS photo_count`;
+const BEFORE_C = `(SELECT credit_name FROM images WHERE owner_type='project_before' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS before_credit`;
+const AFTER_C = `(SELECT credit_name FROM images WHERE owner_type='project_after' AND owner_id=p.id ORDER BY id DESC LIMIT 1) AS after_credit`;
 const COVER = `(SELECT id FROM images WHERE owner_type='listing' AND owner_id=l.id ORDER BY position, id LIMIT 1) AS cover_id`;
 
 router.get('/', async (req, res, next) => {
@@ -17,7 +19,7 @@ router.get('/', async (req, res, next) => {
        WHERE l.status IN ('disponivel','reservado')
        ORDER BY l.featured DESC, l.id DESC LIMIT 3`
     );
-    const { rows: proj } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER} FROM projects p ORDER BY p.id DESC LIMIT 1`);
+    const { rows: proj } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER}, ${BEFORE_C}, ${AFTER_C} FROM projects p ORDER BY p.id DESC LIMIT 1`);
     const { rows: cities } = await pool.query(
       `SELECT DISTINCT city FROM listings WHERE status IN ('disponivel','reservado') ORDER BY city`
     );
@@ -129,7 +131,7 @@ router.post('/imoveis/:id(\\d+)/interesse', rateLimit('inq', 8, 15 * 60 * 1000),
 
 router.get('/trabalhos', async (req, res, next) => {
   try {
-    const { rows: projects } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER} FROM projects p ORDER BY p.id DESC`);
+    const { rows: projects } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER}, ${BEFORE_C}, ${AFTER_C} FROM projects p ORDER BY p.id DESC`);
     res.render('projects', {
       title: 'Trabalhos realizados',
       desc: 'Veja o antes e o depois das casas que a CosmicLounge remodelou.',
