@@ -13,11 +13,25 @@
           <span class="muted"><%= new Date(m.created_at).toLocaleString('pt-PT') %></span>
         </header>
         <div class="muted" style="font-size:.92rem">
-          <a href="mailto:<%= m.email %>" style="color:var(--gold-300)"><%= m.email %></a><% if (m.phone) { %> — <a href="tel:<%= m.phone %>"><%= m.phone %></a><% } %>
+          <a href="mailto:<%= m.email %>" style="color:var(--gold-300)"><%= m.email %></a><% if (m.phone) { %> — <a href="tel:<%= m.phone.replace(/\s/g, "") %>"><%= m.phone %></a><% } %>
           <% if (m.listing_title) { %><br>Imóvel: <a href="/imoveis/<%= m.listing_id %>" style="color:var(--gold-300)"><%= m.listing_title %></a><% } %>
         </div>
         <p><%= m.message %></p>
-        <form method="post" action="/admin/mensagens/<%= m.id %>/tratada"><button class="btn btn-ghost btn-sm" type="submit"><%= m.handled ? 'Marcar como por tratar' : 'Marcar como tratada' %></button></form>
+        <%
+          const _first = m.name.split(' ')[0];
+          const _subj = m.listing_title ? 'Visita: ' + m.listing_title : 'Resposta da CosmicLounge';
+          const _body = 'Olá ' + _first + ',\n\nObrigado pelo seu contacto' + (m.listing_title ? ' sobre o imóvel "' + m.listing_title + '"' : '') + '.\n\n\n\nCumprimentos,\nCosmicLounge';
+          let _digits = (m.phone || '').replace(/\D/g, '');
+          if (_digits.startsWith('00')) _digits = _digits.slice(2);
+          if (_digits.length === 9) _digits = '351' + _digits;
+          const _wa = _digits.length >= 11 ? 'https://wa.me/' + _digits + '?text=' + encodeURIComponent('Olá ' + _first + ', fala a CosmicLounge.' + (m.listing_title ? ' Sobre o imóvel "' + m.listing_title + '": ' : ' ')) : '';
+        %>
+        <div class="actions">
+          <a class="btn btn-gold btn-sm" href="mailto:<%= m.email %>?subject=<%= encodeURIComponent(_subj) %>&body=<%= encodeURIComponent(_body) %>" data-no-transition>Responder por email</a>
+          <% if (m.phone) { %><a class="btn btn-ghost btn-sm" href="tel:<%= m.phone.replace(/\s/g, "") %>" data-no-transition>Ligar</a><% } %>
+          <% if (_wa) { %><a class="btn btn-ghost btn-sm" href="<%= _wa %>" target="_blank" rel="noopener" data-no-transition>WhatsApp</a><% } %>
+          <form method="post" action="/admin/mensagens/<%= m.id %>/tratada" class="inline"><button class="btn btn-ghost btn-sm" type="submit"><%= m.handled ? 'Marcar como por tratar' : 'Marcar como tratada' %></button></form>
+        </div>
       </article>
     <% }) } else { %>
       <div class="empty"><h3>Sem mensagens</h3><p>Os pedidos de visita e mensagens de contacto aparecem aqui.</p></div>
