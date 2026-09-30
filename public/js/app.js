@@ -196,40 +196,59 @@
     });
   }
 
-  /* ---------- Comparador antes/depois ---------- */
-  function tween(from, to, ms, step, done) {
-    var t0 = null;
-    function frame(t) {
-      if (t0 === null) t0 = t;
-      var k = Math.min(1, (t - t0) / ms);
-      var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-      step(from + (to - from) * e);
-      if (k < 1) requestAnimationFrame(frame); else if (done) done();
-    }
-    requestAnimationFrame(frame);
-  }
-
+  /* ---------- Comparador antes/depois ----------
+     Balança sozinho de um lado para o outro. Pára enquanto a pessoa lhe mexe
+     (rato, dedo ou teclado) e volta a mexer-se uns segundos depois. */
   function compare() {
-    var all = document.querySelectorAll('.ba');
-    all.forEach(function (box) {
+    var AMP = 34;          // amplitude do movimento (em %, à volta dos 50)
+    var PERIOD = 7000;     // tempo de uma ida e volta (ms)
+    document.querySelectorAll('.ba').forEach(function (box) {
       var range = box.querySelector('.ba-range');
       if (!range) return;
-      var touched = false;
-      var set = function (v) { box.style.setProperty('--pos', v + '%'); range.value = v; };
-      range.addEventListener('input', function () { touched = true; box.style.setProperty('--pos', range.value + '%'); });
-      if (reduce || !('IntersectionObserver' in window)) return;
-      // pequeno gesto de convite quando entra no ecrã (uma vez)
-      var io = new IntersectionObserver(function (entries) {
-        if (!entries[0].isIntersecting) return;
-        io.disconnect();
-        if (touched) return;
-        tween(50, 32, 600, function (v) { if (!touched) set(v); }, function () {
-          tween(32, 68, 900, function (v) { if (!touched) set(v); }, function () {
-            tween(68, 50, 600, function (v) { if (!touched) set(v); });
-          });
-        });
-      }, { threshold: .55 });
-      io.observe(box);
+      var phase = 0, paused = false, visible = true, raf = 0, last = 0, idle = 0;
+
+      function set(v) { box.style.setProperty('--pos', v.toFixed(2) + '%'); range.value = v; }
+      function frame(t) {
+        if (!last) last = t;
+        var dt = Math.min(t - last, 64);
+        last = t;
+        if (!paused && visible) {
+          phase += (dt / PERIOD) * Math.PI * 2;
+          set(50 + AMP * Math.sin(phase));
+        }
+        raf = requestAnimationFrame(frame);
+      }
+      function start() { if (!raf) { last = 0; raf = requestAnimationFrame(frame); } }
+      function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
+      function hold() { paused = true; clearTimeout(idle); }
+      function release(ms) {
+        clearTimeout(idle);
+        idle = setTimeout(function () {
+          var v = parseFloat(range.value);
+          phase = Math.asin(Math.max(-1, Math.min(1, (v - 50) / AMP)));
+          paused = false;
+        }, ms);
+      }
+
+      range.addEventListener('input', function () { hold(); box.style.setProperty('--pos', range.value + '%'); });
+      box.addEventListener('pointerdown', hold);
+      box.addEventListener('pointerup', function () { release(2500); });
+      box.addEventListener('pointercancel', function () { release(2500); });
+      box.addEventListener('mouseenter', hold);
+      box.addEventListener('mouseleave', function () { release(1200); });
+      range.addEventListener('focus', hold);
+      range.addEventListener('blur', function () { release(1500); });
+
+      if (reduce) return;   // quem prefere menos movimento fica com o cursor parado
+      if ('IntersectionObserver' in window) {
+        visible = false;
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+          if (visible) start(); else stop();
+        }, { threshold: .25 }).observe(box);
+      } else {
+        start();
+      }
     });
   }
 
