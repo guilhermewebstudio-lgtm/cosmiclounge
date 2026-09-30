@@ -1,6 +1,10 @@
 <%- include('../partials/head') %>
 <%
   const _st = STATUS[sub.status] || STATUS.recebido;
+  const _s = sub.status;
+  const _order = util.STATUS_ORDER;
+  const _idx = _order.indexOf(_s);
+  const _closed = ['recusado', 'proposta_recusada'].includes(_s);
 %>
 <section class="page-hero" style="padding-bottom:24px">
   <div class="wrap">
@@ -9,15 +13,110 @@
     <p style="margin-top:12px"><span class="pill pill-<%= _st.tone %>"><%= _st.label %></span></p>
   </div>
 </section>
+
 <section class="section-tight" style="padding-top:0">
-  <div class="wrap" style="display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:start" id="adminSub">
+  <div class="wrap" style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start" id="adminSub">
     <div>
       <%- include('../partials/flash') %>
+
+      <% if (!_closed) { %>
+      <div class="timeline" aria-label="Progresso do pedido">
+        <% _order.filter(k => k !== 'em_analise').forEach((k) => { const i = _order.indexOf(k); %>
+          <div class="tl <%= i < _idx ? 'done' : '' %> <%= i === _idx ? 'now done' : '' %>"><%= STATUS[k].label %></div>
+        <% }) %>
+      </div>
+      <% } %>
+
+      <div class="next">
+        <span class="next-kicker">Próximo passo</span>
+
+        <% if (_s === 'recebido' || _s === 'em_analise') { %>
+          <h2>Envie uma proposta de compra</h2>
+          <p class="muted">Veja os dados e as fotografias ao lado e diga quanto a CosmicLounge oferece.<% if (sub.asking_price) { %> O cliente pretende <strong style="color:var(--gold-300)"><%= euro.format(sub.asking_price) %></strong>.<% } %> O cliente recebe um email.</p>
+          <form method="post" action="/admin/pedidos/<%= sub.id %>/acao">
+            <input type="hidden" name="acao" value="enviar_proposta">
+            <div class="field"><label for="offer_price">Valor da proposta (€)</label><input class="input" id="offer_price" name="offer_price" inputmode="numeric" required placeholder="Ex.: 210000" value="<%= sub.offer_price || '' %>"></div>
+            <div class="field"><label for="admin_note">Mensagem para o cliente (opcional)</label><textarea class="input" id="admin_note" name="admin_note" maxlength="2000" style="min-height:90px"><%= sub.admin_note || '' %></textarea></div>
+            <button class="btn btn-gold" type="submit">Enviar proposta ao cliente</button>
+          </form>
+          <details class="more">
+            <summary>Não quero avançar com este imóvel</summary>
+            <form method="post" action="/admin/pedidos/<%= sub.id %>/acao">
+              <input type="hidden" name="acao" value="recusar">
+              <div class="field"><label for="motivo">Motivo (o cliente vai ver)</label><textarea class="input" id="motivo" name="admin_note" maxlength="2000" style="min-height:80px" placeholder="Ex.: Neste momento não compramos imóveis nesta zona."></textarea></div>
+              <button class="btn btn-danger btn-sm" type="submit">Recusar pedido</button>
+            </form>
+          </details>
+
+        <% } else if (_s === 'proposta_enviada') { %>
+          <h2>À espera da resposta do cliente</h2>
+          <p class="muted">Enviou uma proposta de <strong style="color:var(--gold-300)"><%= euro.format(sub.offer_price || 0) %></strong>. O cliente pode aceitá-la ou recusá-la na conta dele. Se ele responder por telefone ou email, registe aqui:</p>
+          <div class="actions">
+            <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="aceitou"><button class="btn btn-gold" type="submit">O cliente aceitou</button></form>
+            <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="cliente_recusou"><button class="btn btn-danger" type="submit">O cliente recusou</button></form>
+          </div>
+          <details class="more">
+            <summary>Alterar o valor da proposta</summary>
+            <form method="post" action="/admin/pedidos/<%= sub.id %>/acao">
+              <input type="hidden" name="acao" value="enviar_proposta">
+              <div class="field"><label for="offer_price2">Novo valor (€)</label><input class="input" id="offer_price2" name="offer_price" inputmode="numeric" required value="<%= sub.offer_price || '' %>"></div>
+              <div class="field"><label for="note2">Mensagem (opcional)</label><textarea class="input" id="note2" name="admin_note" maxlength="2000" style="min-height:80px"><%= sub.admin_note || '' %></textarea></div>
+              <button class="btn btn-ghost btn-sm" type="submit">Enviar nova proposta</button>
+            </form>
+          </details>
+
+        <% } else if (_s === 'proposta_aceite') { %>
+          <h2>Tratar da escritura</h2>
+          <p class="muted">O cliente aceitou a proposta de <strong style="color:var(--gold-300)"><%= euro.format(sub.offer_price || 0) %></strong>. Combine a escritura com ele (contacto ao lado). Quando estiver concluída, marque como comprado.</p>
+          <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="comprado"><button class="btn btn-gold" type="submit">Escritura feita, marcar como comprado</button></form>
+
+        <% } else if (_s === 'comprado') { %>
+          <h2>Começar a remodelação</h2>
+          <p class="muted">A casa é da empresa. Quando a obra começar, marque-a aqui. O cliente é avisado por email.</p>
+          <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="remodelacao"><button class="btn btn-gold" type="submit">Começar a remodelação</button></form>
+
+        <% } else if (_s === 'em_remodelacao') { %>
+          <h2>Publicar a casa quando a obra acabar</h2>
+          <p class="muted">Com a casa pronta, crie o anúncio para venda. Os dados já vêm preenchidos, só falta o preço de venda e as fotografias. Se quiser, mostre também o antes e depois em Trabalhos.</p>
+          <div class="actions">
+            <a class="btn btn-gold" href="/admin/imoveis/novo?pedido=<%= sub.id %>">Criar anúncio para venda</a>
+            <a class="btn btn-ghost" href="/admin/trabalhos/novo">Publicar antes e depois</a>
+          </div>
+
+        <% } else if (_s === 'a_venda') { %>
+          <h2>Casa à venda</h2>
+          <p class="muted">Este imóvel já está publicado no site. Os pedidos de visita chegam a Mensagens.</p>
+          <% published.forEach(p => { %><p><a class="btn btn-ghost btn-sm" href="/admin/imoveis/<%= p.id %>"><%= p.title %></a></p><% }) %>
+
+        <% } else { %>
+          <h2>Pedido fechado</h2>
+          <p class="muted"><%= _s === 'recusado' ? 'Recusou este pedido.' : 'O cliente recusou a proposta.' %> Se mudar de ideias, pode reabri-lo.</p>
+          <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="reabrir"><button class="btn btn-ghost" type="submit">Reabrir pedido</button></form>
+        <% } %>
+      </div>
+
+      <details class="more" style="margin-top:18px">
+        <summary>Opções avançadas (mudar o estado à mão)</summary>
+        <form method="post" action="/admin/pedidos/<%= sub.id %>">
+          <div class="field"><label for="status">Estado</label>
+            <select class="input" id="status" name="status">
+              <% allStatus.forEach(k => { %><option value="<%= k %>" <%= sub.status === k ? 'selected' : '' %>><%= STATUS[k].label %></option><% }) %>
+            </select>
+          </div>
+          <div class="field"><label for="offer_price3">Proposta de compra (€)</label><input class="input" id="offer_price3" name="offer_price" inputmode="numeric" value="<%= sub.offer_price || '' %>"></div>
+          <div class="field"><label for="admin_note3">Mensagem para o cliente</label><textarea class="input" id="admin_note3" name="admin_note" maxlength="2000" style="min-height:80px"><%= sub.admin_note || '' %></textarea></div>
+          <label class="check" style="margin-bottom:16px"><input type="checkbox" name="notify" value="1"> Notificar o cliente por email</label>
+          <button class="btn btn-ghost btn-sm" type="submit">Guardar</button>
+        </form>
+      </details>
+    </div>
+
+    <div>
       <div class="panel">
         <h3>Cliente</h3>
         <dl class="kv">
           <dt>Nome</dt><dd><%= sub.user_name %></dd>
-          <dt>Email</dt><dd><a href="mailto:<%= sub.user_email %>" class="row-link" style="color:var(--gold-300)"><%= sub.user_email %></a></dd>
+          <dt>Email</dt><dd><a href="mailto:<%= sub.user_email %>" style="color:var(--gold-300)"><%= sub.user_email %></a></dd>
           <% if (sub.user_phone) { %><dt>Telemóvel</dt><dd><a href="tel:<%= sub.user_phone %>"><%= sub.user_phone %></a></dd><% } %>
         </dl>
       </div>
@@ -37,37 +136,12 @@
         </dl>
       </div>
       <% if (images.length) { %>
-      <div class="panel"><h3>Fotografias</h3>
+      <div class="panel"><h3>Fotografias (<%= images.length %>)</h3>
         <div class="photos"><% images.forEach(im => { %><a href="/img/<%= im.id %>" target="_blank" rel="noopener" data-no-transition><img src="/img/<%= im.id %>" alt="" loading="lazy"></a><% }) %></div>
       </div>
+      <% } else { %>
+      <div class="panel"><h3>Fotografias</h3><p class="muted" style="margin:0">O cliente não enviou fotografias.</p></div>
       <% } %>
-    </div>
-
-    <div>
-      <div class="panel">
-        <h3>Atualizar pedido</h3>
-        <form method="post" action="/admin/pedidos/<%= sub.id %>">
-          <div class="field"><label for="status">Estado</label>
-            <select class="input" id="status" name="status">
-              <% allStatus.forEach(k => { %><option value="<%= k %>" <%= sub.status === k ? 'selected' : '' %>><%= STATUS[k].label %></option><% }) %>
-            </select>
-          </div>
-          <div class="field"><label for="offer_price">Proposta de compra (€)</label><input class="input" id="offer_price" name="offer_price" inputmode="numeric" value="<%= sub.offer_price || '' %>"></div>
-          <div class="field"><label for="admin_note">Mensagem para o cliente</label><textarea class="input" id="admin_note" name="admin_note" maxlength="2000"><%= sub.admin_note || '' %></textarea><span class="hint">Aparece na conta do cliente e no email, se o enviar.</span></div>
-          <label class="check" style="margin-bottom:18px"><input type="checkbox" name="notify" value="1" checked> Notificar o cliente por email</label>
-          <button class="btn btn-gold btn-block" type="submit">Guardar</button>
-        </form>
-      </div>
-      <div class="panel">
-        <h3>Publicar no site</h3>
-        <% if (published.length) { %>
-          <p class="muted">Já publicado:</p>
-          <% published.forEach(p => { %><p><a class="row-link" style="color:var(--gold-300)" href="/admin/imoveis/<%= p.id %>"><%= p.title %></a></p><% }) %>
-        <% } else { %>
-          <p class="muted">Depois da remodelação, crie o anúncio com os dados deste pedido.</p>
-          <a class="btn btn-ghost" href="/admin/imoveis/novo?pedido=<%= sub.id %>">Criar anúncio</a>
-        <% } %>
-      </div>
     </div>
   </div>
 </section>

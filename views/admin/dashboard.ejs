@@ -16,22 +16,25 @@
     </div>
 
     <div class="chips">
-      <a class="chip <%= !filtro ? 'is-on' : '' %>" href="/admin">Todos</a>
-      <% allStatus.forEach(k => { %><a class="chip <%= filtro === k ? 'is-on' : '' %>" href="/admin?estado=<%= k %>"><%= STATUS[k].label %></a><% }) %>
+      <a class="chip <%= !ver ? 'is-on' : '' %>" href="/admin">Todos (<%= counts.pedidos %>)</a>
+      <a class="chip <%= ver === 'tratar' ? 'is-on' : '' %>" href="/admin?ver=tratar">Por tratar (<%= counts.por_tratar %>)</a>
+      <a class="chip <%= ver === 'espera' ? 'is-on' : '' %>" href="/admin?ver=espera">À espera (<%= counts.espera %>)</a>
+      <a class="chip <%= ver === 'fechados' ? 'is-on' : '' %>" href="/admin?ver=fechados">Fechados (<%= counts.fechados %>)</a>
     </div>
 
     <% if (subs.length) { %>
     <div class="table-wrap">
       <table class="t">
-        <thead><tr><th>#</th><th>Imóvel</th><th>Cliente</th><th>Pretendido</th><th>Estado</th><th>Data</th></tr></thead>
+        <thead><tr><th>#</th><th>Imóvel</th><th>Cliente</th><th>Pretendido</th><th>Estado</th><th>O que fazer</th><th>Data</th></tr></thead>
         <tbody>
-          <% subs.forEach(s => { const st = STATUS[s.status] || STATUS.recebido; %>
+          <% subs.forEach(s => { const st = STATUS[s.status] || STATUS.recebido; const nx = util.NEXT[s.status] || { text: '—', urgent: false }; %>
             <tr>
               <td><a class="row-link" href="/admin/pedidos/<%= s.id %>">#<%= s.id %></a></td>
               <td><%= s.tipo %> em <%= s.city %></td>
               <td><%= s.user_name %><br><span class="muted" style="font-size:.85rem"><%= s.user_email %></span></td>
               <td><%= s.asking_price ? euro.format(s.asking_price) : '—' %></td>
               <td><span class="pill pill-<%= st.tone %>"><%= st.label %></span></td>
+              <td><% if (nx.urgent) { %><a class="todo" href="/admin/pedidos/<%= s.id %>"><%= nx.text %></a><% } else { %><span class="muted"><%= nx.text %></span><% } %></td>
               <td class="muted"><%= new Date(s.created_at).toLocaleDateString('pt-PT') %></td>
             </tr>
           <% }) %>
@@ -39,7 +42,7 @@
       </table>
     </div>
     <% } else { %>
-      <div class="empty"><h3>Sem pedidos</h3><p>Quando alguém submeter um imóvel, aparece aqui.</p></div>
+      <div class="empty"><h3>Nada por aqui</h3><p>Quando alguém submeter um imóvel, aparece nesta lista.</p></div>
     <% } %>
   </div>
 </section>

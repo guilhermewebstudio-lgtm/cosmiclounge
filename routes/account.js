@@ -86,4 +86,26 @@ router.get('/conta/pedidos/:id(\\d+)', requireLogin, async (req, res, next) => {
   }
 });
 
+router.post('/conta/pedidos/:id(\\d+)/responder', requireLogin, async (req, res, next) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM submissions WHERE id = $1 AND user_id = $2', [req.params.id, req.session.user.id]);
+    const sub = rows[0];
+    if (!sub) return next();
+    if (sub.status !== 'proposta_enviada') {
+      req.session.flash = { type: 'error', text: 'Este pedido já não tem nenhuma proposta por responder.' };
+      return res.redirect(`/conta/pedidos/${sub.id}`);
+    }
+    const accepted = req.body.resposta === 'aceitar';
+    await pool.query('UPDATE submissions SET status=$1, updated_at=now() WHERE id=$2', [accepted ? 'proposta_aceite' : 'proposta_recusada', sub.id]);
+    mail.proposalAnswer(req.session.user, sub, accepted);
+    req.session.flash = {
+      type: 'ok',
+      text: accepted ? 'Proposta aceite! A nossa equipa vai contactá-lo para combinar a escritura.' : 'Proposta recusada. Se mudar de ideias, contacte-nos.'
+    };
+    res.redirect(`/conta/pedidos/${sub.id}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

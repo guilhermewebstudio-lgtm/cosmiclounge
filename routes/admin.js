@@ -2,46 +2,41 @@ const express = require('express');
 const { pool } = require('../lib/db');
 const { requireAdmin } = require('../lib/auth');
 const { upload, saveImages } = require('../lib/upload');
-const { clean, toInt, TIPOS, STATUS, STATUS_ORDER, euro } = require('../lib/util');
+const { clean, toInt, TIPOS, STATUS, STATUS_ORDER, GROUPS, euro } = require('../lib/util');
 const mail = require('../lib/mail');
 
 const router = express.Router();
 router.use(requireAdmin);
 
-const ALL_STATUS = [...STATUS_ORDER, 'recusado'];
+const ALL_STATUS = [...STATUS_ORDER, 'recusado', 'proposta_recusada'];
 const LISTING_STATUS = { disponivel: 'Disponível', reservado: 'Reservado', vendido: 'Vendido' };
 
 router.get('/', async (req, res, next) => {
   try {
-    const filtro = ALL_STATUS.includes(req.query.estado) ? req.query.estado : '';
-    const params = [];
+    const ver = GROUPS[req.query.ver] ? req.query.ver : '';
+    const params = [GROUPS.tratar];
     let where = '';
-    if (filtro) {
-      params.push(filtro);
-      where = 'WHERE s.status = $1';
+    if (ver) {
+      params.push(GROUPS[ver]);
+      where = 'WHERE s.status = ANY($2)';
     }
     const { rows: subs } = await pool.query(
       `SELECT s.*, u.name AS user_name, u.email AS user_email
-       FROM submissions s JOIN users u ON u.id = s.user_id ${where} ORDER BY s.id DESC LIMIT 100`,
+       FROM submissions s JOIN users u ON u.id = s.user_id ${where}
+       ORDER BY (s.status = ANY($1)) DESC, s.id DESC LIMIT 100`,
       params
     );
     const { rows: counts } = await pool.query(
       `SELECT
-        (SELECT COUNT(*)::int FROM submissions WHERE status IN ('recebido','em_analise')) AS por_tratar,
+        (SELECT COUNT(*)::int FROM submissions WHERE status = ANY($1)) AS por_tratar,
+        (SELECT COUNT(*)::int FROM submissions WHERE status = ANY($2)) AS espera,
+        (SELECT COUNT(*)::int FROM submissions WHERE status = ANY($3)) AS fechados,
         (SELECT COUNT(*)::int FROM submissions) AS pedidos,
         (SELECT COUNT(*)::int FROM listings WHERE status <> 'vendido') AS imoveis,
-        (SELECT COUNT(*)::int FROM inquiries WHERE handled = false) AS mensagens`
+        (SELECT COUNT(*)::int FROM inquiries WHERE handled = false) AS mensagens`,
+      [GROUPS.tratar, GROUPS.espera, GROUPS.fechados]
     );
-    res.render('admin/dashboard', {
-      title: 'Painel',
-      page: 'admin',
-      adminPage: 'pedidos',
-      subs,
-      counts: counts[0],
-      filtro,
-      allStatus: ALL_STATUS,
-      STATUS
-    });
+    res.render('admin/dashboard', { title: 'Painel', page: 'admin', adminPage: 'pedidos', subs, counts: counts[0], ver, STATUS });
   } catch (err) {
     next(err);
   }
@@ -99,6 +94,55 @@ router.post('/pedidos/:id(\\d+)', async (req, res, next) => {
     }
     req.session.flash = { type: 'ok', text: notify ? 'Pedido atualizado e cliente notificado.' : 'Pedido atualizado.' };
     res.redirect(`/admin/pedidos/${sub.id}`);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Ações guiadas (um botão por passo)
+const ACOES = {
+  enviar_proposta: { status: 'proposta_enviada', notify: true, offer: true, note: true, ok: 'Proposta enviada ao cliente.' },
+  recusar: { status: 'recusado', notify: true, note: true, ok: 'Pedido recusado e cliente avisado.' },
+  aceitou: { status: 'proposta_aceite', notify: false, ok: 'Registado: o cliente aceitou a proposta.' },
+  cliente_recusou: { status: 'proposta_recusada', notify: false, ok: 'Registado: o cliente recusou a proposta.' },
+  comprado: { status: 'comprado', notify: true, ok: 'Marcado como comprado.' },
+  remodelacao: { status: 'em_remodelacao', notify: true, ok: 'Remodelação iniciada.' },
+  reabrir: { status: 'recebido', notify: false, clearNote: true, ok: 'Pedido reaberto.' }
+};
+
+router.post('/pedidos/:id(\\d+)/acao', async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT s.*, u.name AS user_name, u.email AS user_email
+       FROM submissions s JOIN users u ON u.id = s.user_id WHERE s.id = $1`,
+      [req.params.id]
+    );
+    const sub = rows[0];
+    if (!sub) return next();
+    const a = ACOES[req.body.acao];
+    const back = `/admin/pedidos/${sub.id}`;
+    if (!a) {
+      req.session.flash = { type: 'error', text: 'Ação inválida.' };
+      return res.redirect(back);
+    }
+    let offer = sub.offer_price;
+    if (a.offer) {
+      offer = toInt(req.body.offer_price);
+      if (!offer || offer <= 0) {
+        req.session.flash = { type: 'error', text: 'Indique o valor da proposta em euros.' };
+        return res.redirect(back);
+      }
+    }
+    const note = a.note ? clean(req.body.admin_note, 2000) || null : a.clearNote ? null : sub.admin_note;
+    const { rows: upd } = await pool.query(
+      'UPDATE submissions SET status=$1, offer_price=$2, admin_note=$3, updated_at=now() WHERE id=$4 RETURNING *',
+      [a.status, offer, note, sub.id]
+    );
+    if (a.notify) {
+      mail.submissionUpdated({ name: sub.user_name, email: sub.user_email }, upd[0], STATUS[a.status], a.offer && offer ? euro.format(offer) : '');
+    }
+    req.session.flash = { type: 'ok', text: a.ok };
+    res.redirect(back);
   } catch (err) {
     next(err);
   }

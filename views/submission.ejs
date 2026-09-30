@@ -2,7 +2,7 @@
 <%
   const st = util.STATUS[sub.status] || util.STATUS.recebido;
   const order = util.STATUS_ORDER;
-  const idx = order.indexOf(sub.status);
+  const idx = Math.max(0, order.indexOf(sub.status === 'em_analise' ? 'recebido' : sub.status));
 %>
 <section class="page-hero" style="padding-bottom:30px">
   <div class="wrap">
@@ -15,9 +15,9 @@
 <section class="section-tight" style="padding-top:0">
   <div class="wrap" style="max-width:940px">
     <%- include('partials/flash') %>
-    <% if (sub.status !== 'recusado') { %>
+    <% if (!['recusado', 'proposta_recusada'].includes(sub.status)) { %>
     <div class="timeline" aria-label="Progresso do pedido">
-      <% order.forEach((k, i) => { %>
+      <% order.filter(k => k !== 'em_analise').forEach((k) => { const i = order.indexOf(k); %>
         <div class="tl <%= i < idx ? 'done' : '' %> <%= i === idx ? 'now done' : '' %>"><%= util.STATUS[k].label %></div>
       <% }) %>
     </div>
@@ -29,6 +29,13 @@
       <div class="offer">
         <span class="muted">Proposta da CosmicLounge</span>
         <div class="price-big"><%= euro.format(sub.offer_price) %></div>
+        <% if (sub.status === 'proposta_enviada') { %>
+          <p class="muted" style="margin:14px 0 16px">Se aceitar, tratamos da documentação e da escritura. Pode também recusar sem qualquer compromisso.</p>
+          <div class="actions">
+            <form method="post" action="/conta/pedidos/<%= sub.id %>/responder"><input type="hidden" name="resposta" value="aceitar"><button class="btn btn-gold" type="submit">Aceitar proposta</button></form>
+            <form method="post" action="/conta/pedidos/<%= sub.id %>/responder" onsubmit="return confirm('Tem a certeza de que quer recusar esta proposta?')"><input type="hidden" name="resposta" value="recusar"><button class="btn btn-danger" type="submit">Recusar</button></form>
+          </div>
+        <% } %>
       </div>
     <% } %>
     <% if (sub.admin_note) { %>
