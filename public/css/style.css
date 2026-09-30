@@ -612,3 +612,15 @@ table.t a.row-link { color: var(--gold-300); border-bottom: 1px solid var(--line
   body.is-in .nav-links a.drawer-only, body.is-in .nav-links form.drawer-only .logout-btn { display: inline-flex; padding: 10px 26px; border: 1px solid var(--gold-500); border-radius: 999px; font-family: var(--ui); font-size: 1rem; color: var(--gold-100); }
 }
 .nav-links a:not(.btn), .logout-btn { white-space: nowrap; }
+
+/* Seletor de fotografias com miniaturas */
+.drop-status { margin: 12px 0 0; font-size: .95rem; color: var(--gold-300); min-height: 1.4em; }
+.drop-status.is-ok { color: var(--ok); }
+.drop-status.is-warn { color: var(--err); }
+.thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; margin-top: 14px; }
+.thumbs:empty { display: none; }
+.thumb { position: relative; aspect-ratio: 4 / 3; border-radius: 4px; overflow: hidden; border: 1px solid var(--line-soft); animation: pop .3s var(--ease); }
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+.thumb button { position: absolute; top: 6px; right: 6px; width: 28px; height: 28px; border-radius: 50%; background: rgba(6, 14, 29, .88); border: 1px solid rgba(239, 143, 143, .5); color: var(--err); display: grid; place-items: center; font-size: 1.1rem; line-height: 1; }
+.thumb button:hover { background: rgba(239, 143, 143, .2); }
+.thumb .cap { position: absolute; left: 6px; bottom: 6px; padding: 2px 10px; border-radius: 999px; background: rgba(6, 14, 29, .85); border: 1px solid var(--line); font-size: .74rem; color: var(--gold-300); }

@@ -48,10 +48,11 @@
         <label class="drop" id="drop">
           <%- ico('upload', 28) %>
           <strong>Adicionar fotografias</strong>
-          <span>Até 6 de cada vez (JPG, PNG ou WebP, 3 MB cada). A primeira é a capa.</span>
-          <span class="drop-names" id="dropNames"></span>
-          <input type="file" name="fotos" id="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+          <span>Até 10 de cada vez (JPG, PNG ou WebP). Pode voltar a clicar para juntar mais. A primeira é a capa.</span>
+          <input type="file" name="fotos" id="fotos" accept="image/jpeg,image/png,image/webp" multiple data-max="10" data-rec="0">
         </label>
+        <p class="drop-status" id="dropNames" aria-live="polite"></p>
+        <div class="thumbs" id="dropGrid"></div>
       </div>
 
       <div class="actions" style="margin-top:24px">

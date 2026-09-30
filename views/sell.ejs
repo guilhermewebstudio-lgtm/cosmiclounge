@@ -41,13 +41,15 @@
 
       <div class="panel">
         <h3>Fotografias</h3>
+        <p class="muted" style="margin-bottom:16px">Recomendamos pelo menos <strong>4 fotografias</strong>: fachada, sala, cozinha e casa de banho. Quantas mais mostrar, mais rápida e precisa é a nossa proposta.</p>
         <label class="drop" id="drop">
           <%- ico('upload', 28) %>
           <strong>Arraste as fotografias ou clique para escolher</strong>
-          <span>Até 6 imagens (JPG, PNG ou WebP) com 3 MB cada</span>
-          <span class="drop-names" id="dropNames"></span>
-          <input type="file" name="fotos" id="fotos" accept="image/jpeg,image/png,image/webp" multiple>
+          <span>Até 10 imagens (JPG, PNG ou WebP). Pode voltar a clicar para juntar mais.</span>
+          <input type="file" name="fotos" id="fotos" accept="image/jpeg,image/png,image/webp" multiple data-max="10" data-rec="4">
         </label>
+        <p class="drop-status" id="dropNames" aria-live="polite"></p>
+        <div class="thumbs" id="dropGrid"></div>
       </div>
 
       <p class="muted" style="margin:22px 0">Ao submeter, a CosmicLounge fica com os seus dados para avaliar o imóvel e contactá-lo sobre este pedido.</p>

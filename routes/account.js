@@ -33,7 +33,7 @@ router.get('/vender', requireLogin, (req, res) => {
   });
 });
 
-router.post('/vender', requireLogin, upload.array('fotos', 6), async (req, res, next) => {
+router.post('/vender', requireLogin, upload.array('fotos', 10), async (req, res, next) => {
   try {
     const b = req.body;
     const form = {

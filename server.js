@@ -69,7 +69,7 @@ app.use((err, req, res, next) => {
     title: 'Ocorreu um erro',
     code: isUpload ? 400 : 500,
     message: isUpload
-      ? 'Não foi possível carregar as fotografias. Use até 6 imagens de 3 MB cada.'
+      ? 'Não foi possível carregar as fotografias. Use até 10 imagens de 3 MB cada.'
       : 'Algo correu mal do nosso lado. Tente novamente dentro de instantes.'
   });
 });

@@ -173,7 +173,7 @@ function listingFromBody(b) {
   };
 }
 
-router.post('/imoveis', upload.array('fotos', 6), async (req, res, next) => {
+router.post('/imoveis', upload.array('fotos', 10), async (req, res, next) => {
   try {
     const d = listingFromBody(req.body);
     if (!d.title || !d.city || !d.price) {
@@ -228,7 +228,7 @@ router.get('/imoveis/:id(\\d+)', async (req, res, next) => {
   }
 });
 
-router.post('/imoveis/:id(\\d+)', upload.array('fotos', 6), async (req, res, next) => {
+router.post('/imoveis/:id(\\d+)', upload.array('fotos', 10), async (req, res, next) => {
   try {
     const d = listingFromBody(req.body);
     const id = req.params.id;
