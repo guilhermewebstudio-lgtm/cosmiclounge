@@ -10,9 +10,17 @@
   function header() {
     var h = document.getElementById('header');
     if (h) {
-      var on = function () { h.classList.toggle('is-scrolled', window.scrollY > 8); };
+      var bar = document.getElementById('progress');
+      var on = function () {
+        h.classList.toggle('is-scrolled', window.scrollY > 8);
+        if (bar) {
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, window.scrollY / max) : 0) + ')';
+        }
+      };
       on();
       window.addEventListener('scroll', on, { passive: true });
+      window.addEventListener('resize', on);
     }
     var b = document.getElementById('burger');
     if (b) {
@@ -252,6 +260,79 @@
     });
   }
 
+  /* ---------- Animação ao fazer scroll ---------- */
+  var REVEAL_PAGES = ['home', 'sobre', 'imoveis', 'trabalhos', 'contacto'];
+
+  function reveal() {
+    if (reduce || !('IntersectionObserver' in window)) return;
+    var onPage = REVEAL_PAGES.some(function (p) { return document.body.classList.contains('page-' + p); });
+    if (!onPage) return;
+
+    var rules = [
+      ['.section-head', ''], ['.step', ''], ['.lcard', ''], ['.faq details', ''], ['.principles li', ''],
+      ['.strip .fact', ''], ['.cta', 'reveal-z'], ['.footer-top > div', ''],
+      ['.work .work-media', 'reveal-l'], ['.work .work-info', 'reveal-r'], ['.work.is-flip .work-media', 'reveal-r'], ['.work.is-flip .work-info', 'reveal-l'],
+      ['.about-grid > div:first-child', 'reveal-l'], ['.about-grid > .frame', 'reveal-r'],
+      ['.filters', ''], ['.side-card', 'reveal-r'], ['.detail-grid > div:first-child', '']
+    ];
+    var items = [];
+    rules.forEach(function (r) {
+      document.querySelectorAll(r[0]).forEach(function (el) {
+        if (el.closest('.hero')) return;
+        el.classList.remove('reveal-l', 'reveal-r', 'reveal-z');
+        if (r[1]) el.classList.add(r[1]);
+        if (items.indexOf(el) === -1) items.push(el);
+      });
+    });
+
+    // atraso escalonado entre irmãos
+    var seen = new Map();
+    items.forEach(function (el) {
+      var parent = el.parentElement;
+      var n = seen.get(parent) || 0;
+      seen.set(parent, n + 1);
+      el.style.setProperty('--d', (Math.min(n, 5) * 0.09).toFixed(2) + 's');
+      el.classList.add('reveal');
+    });
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        io.unobserve(el);
+        el.classList.add('is-in');
+        var wait = 900 + parseFloat(el.style.getPropertyValue('--d') || 0) * 1000;
+        // depois de aparecer, devolve o elemento ao normal (para o hover funcionar)
+        setTimeout(function () { el.classList.remove('reveal', 'is-in', 'reveal-l', 'reveal-r', 'reveal-z'); el.style.removeProperty('--d'); }, wait + 100);
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+    items.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ---------- Números que contam ---------- */
+  function counters() {
+    var els = document.querySelectorAll('[data-count]');
+    if (!els.length) return;
+    function run(el) {
+      var to = parseInt(el.getAttribute('data-count'), 10);
+      if (!isFinite(to)) return;
+      var t0 = null;
+      el.textContent = '0';
+      requestAnimationFrame(function step(t) {
+        if (t0 === null) t0 = t;
+        var k = Math.min(1, (t - t0) / 1300);
+        var e = 1 - Math.pow(1 - k, 3);
+        el.textContent = String(Math.round(to * e));
+        if (k < 1) requestAnimationFrame(step);
+      });
+    }
+    if (reduce || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { io.unobserve(en.target); run(en.target); } });
+    }, { threshold: .6 });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
   /* ---------- Arranque ---------- */
   function boot() {
     header();
@@ -259,6 +340,8 @@
     extras();
     photoPicker();
     compare();
+    reveal();
+    counters();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

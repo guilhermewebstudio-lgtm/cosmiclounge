@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=13">
+  <link rel="stylesheet" href="/css/style.css?v=14">
 </head>
 <body class="page-<%= _page %><%= user ? ' is-in' : '' %><%= user && user.role === 'admin' ? ' is-admin' : '' %>">
 <a class="sr-only" href="#main">Saltar para o conteúdo</a>
@@ -67,6 +67,7 @@
       <button class="burger" id="burger" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks"><%- ico('menu', 22) %></button>
     </div>
   </div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
 </header>
 <% } %>
 <main id="main">

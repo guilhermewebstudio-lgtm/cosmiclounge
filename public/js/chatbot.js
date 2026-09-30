@@ -178,7 +178,12 @@
     botSay(res, function () { renderChips(CHIPS); });
   }
 
+  var hint = document.getElementById('chatHint');
+  function hideHint() { if (hint) { hint.classList.remove('is-on'); } }
+
   function open() {
+    hideHint();
+    fab.classList.add('is-seen');
     box.classList.add('is-open');
     fab.setAttribute('aria-expanded', 'true');
     if (!started) {
@@ -188,6 +193,20 @@
     setTimeout(function () { input.focus(); }, 200);
   }
   function close() { box.classList.remove('is-open'); fab.setAttribute('aria-expanded', 'false'); }
+
+  if (hint) {
+    hint.addEventListener('click', function () { if (!box.classList.contains('is-open')) open(); });
+    try {
+      if (!sessionStorage.getItem('cl_hint')) {
+        setTimeout(function () {
+          if (started) return;
+          hint.classList.add('is-on');
+          sessionStorage.setItem('cl_hint', '1');
+          setTimeout(hideHint, 9000);
+        }, 6000);
+      }
+    } catch { /* sem sessionStorage */ }
+  }
 
   fab.addEventListener('click', function () { box.classList.contains('is-open') ? close() : open(); });
   closeBtn.addEventListener('click', close);

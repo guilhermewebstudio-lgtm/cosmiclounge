@@ -56,6 +56,7 @@
 </footer>
 
 <div id="chatRoot" data-name="<%= user ? user.name.split(' ')[0] : '' %>">
+  <button type="button" class="chat-hint" id="chatHint" tabindex="-1" aria-hidden="true">Precisa de ajuda?<br><strong>Fale com o Cosmo</strong></button>
   <button class="chat-fab" id="chatFab" type="button" aria-label="Abrir assistente Cosmo" aria-expanded="false">
     <img src="/img/logo-mark.png" alt=""><span class="dot"></span>
   </button>
@@ -76,7 +77,7 @@
 <% } %>
 
 <% if (!_bareF) { %><script>window.__co = <%- JSON.stringify({ phone: company.phone, email: company.email, hours: company.hours }).replace(/</g, '\\u003c') %>;</script><% } %>
-<script src="/js/app.js?v=5" defer></script>
-<% if (!_bareF) { %><script src="/js/chatbot.js?v=3" defer></script><% } %>
+<script src="/js/app.js?v=6" defer></script>
+<% if (!_bareF) { %><script src="/js/chatbot.js?v=4" defer></script><% } %>
 </body>
 </html>
