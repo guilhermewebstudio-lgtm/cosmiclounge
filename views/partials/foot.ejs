@@ -56,7 +56,10 @@
 </footer>
 
 <div id="chatRoot" data-name="<%= user ? user.name.split(' ')[0] : '' %>">
-  <button type="button" class="chat-hint" id="chatHint" tabindex="-1" aria-hidden="true">Precisa de ajuda?<br><strong>Fale com o Cosmo</strong></button>
+  <div class="chat-hint" id="chatHint" role="status">
+    <button type="button" class="chat-hint-open" id="chatHintOpen" tabindex="-1">Olá! Sou o <strong>Cosmo</strong>, o assistente da CosmicLounge.<br>Se precisar de ajuda, é só perguntar.</button>
+    <button type="button" class="chat-hint-x" id="chatHintX" aria-label="Fechar mensagem" tabindex="-1">&times;</button>
+  </div>
   <button class="chat-fab" id="chatFab" type="button" aria-label="Abrir assistente Cosmo" aria-expanded="false">
     <img src="/img/logo-mark.png" alt=""><span class="dot"></span>
   </button>
@@ -78,6 +81,6 @@
 
 <% if (!_bareF) { %><script>window.__co = <%- JSON.stringify({ phone: company.phone, email: company.email, hours: company.hours }).replace(/</g, '\\u003c') %>;</script><% } %>
 <script src="/js/app.js?v=6" defer></script>
-<% if (!_bareF) { %><script src="/js/chatbot.js?v=4" defer></script><% } %>
+<% if (!_bareF) { %><script src="/js/chatbot.js?v=5" defer></script><% } %>
 </body>
 </html>

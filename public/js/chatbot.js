@@ -179,10 +179,17 @@
   }
 
   var hint = document.getElementById('chatHint');
-  function hideHint() { if (hint) { hint.classList.remove('is-on'); } }
+  var hintOpen = document.getElementById('chatHintOpen');
+  var hintX = document.getElementById('chatHintX');
+  function hideHint(remember) {
+    if (hint) hint.classList.remove('is-on');
+    if (hintOpen) hintOpen.tabIndex = -1;
+    if (hintX) hintX.tabIndex = -1;
+    if (remember) { try { sessionStorage.setItem('cl_hint_off', '1'); } catch { /* ignora */ } }
+  }
 
   function open() {
-    hideHint();
+    hideHint(true);
     fab.classList.add('is-seen');
     box.classList.add('is-open');
     fab.setAttribute('aria-expanded', 'true');
@@ -194,18 +201,20 @@
   }
   function close() { box.classList.remove('is-open'); fab.setAttribute('aria-expanded', 'false'); }
 
+  // Balão ao lado do botão: aparece pouco depois de a página abrir e fica até ser fechado
   if (hint) {
-    hint.addEventListener('click', function () { if (!box.classList.contains('is-open')) open(); });
-    try {
-      if (!sessionStorage.getItem('cl_hint')) {
-        setTimeout(function () {
-          if (started) return;
-          hint.classList.add('is-on');
-          sessionStorage.setItem('cl_hint', '1');
-          setTimeout(hideHint, 9000);
-        }, 6000);
-      }
-    } catch { /* sem sessionStorage */ }
+    if (hintOpen) hintOpen.addEventListener('click', function () { if (!box.classList.contains('is-open')) open(); });
+    if (hintX) hintX.addEventListener('click', function () { hideHint(true); });
+    var off = false;
+    try { off = sessionStorage.getItem('cl_hint_off') === '1'; } catch { /* ignora */ }
+    if (!off) {
+      setTimeout(function () {
+        if (started || box.classList.contains('is-open')) return;
+        hint.classList.add('is-on');
+        if (hintOpen) hintOpen.tabIndex = 0;
+        if (hintX) hintX.tabIndex = 0;
+      }, 2200);
+    }
   }
 
   fab.addEventListener('click', function () { box.classList.contains('is-open') ? close() : open(); });
