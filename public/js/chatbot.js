@@ -112,12 +112,17 @@
     return typeof best.a === 'function' ? best.a() : best.a;
   }
 
+  function toBottom() {
+    body.scrollTop = body.scrollHeight;
+    requestAnimationFrame(function () { body.scrollTop = body.scrollHeight; });
+  }
+
   function add(html, who) {
     var d = document.createElement('div');
     d.className = 'bubble ' + who;
     d.innerHTML = html;
     body.appendChild(d);
-    body.scrollTop = body.scrollHeight;
+    toBottom();
     return d;
   }
 
@@ -146,6 +151,7 @@
       b.addEventListener('click', function () { ask(c); });
       quick.appendChild(b);
     });
+    toBottom();
   }
 
   function ask(text) {
@@ -154,6 +160,7 @@
     add(esc(text), 'me');
     input.value = '';
     quick.innerHTML = '';
+    toBottom();
     var n = norm(text);
     var res;
     if (/(ver|mostrar|quero ver).*imoveis|imoveis.*venda/.test(n)) {
