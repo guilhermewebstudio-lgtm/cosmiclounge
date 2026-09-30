@@ -6,7 +6,7 @@
   </div>
 </section>
 
-<section class="section-tight" style="padding-top:0">
+<section class="section-tight" style="padding-top:32px">
   <div class="wrap detail-grid">
     <div>
       <div class="gallery-main" id="galleryMain">
@@ -26,7 +26,7 @@
 
       <div style="margin-top:44px">
         <h3 style="margin-bottom:14px">Sobre este imóvel</h3>
-        <p class="measure" style="white-space:pre-line;color:#c4cde0"><%= listing.description || 'Imóvel remodelado pela CosmicLounge. Contacte-nos para mais informações.' %></p>
+        <p class="measure" style="white-space:pre-line;color:var(--ink-2)"><%= listing.description || 'Imóvel remodelado pela CosmicLounge. Contacte-nos para mais informações.' %></p>
         <% if (features.length) { %>
           <h3 style="margin:30px 0 14px">Características</h3>
           <ul class="features"><% features.forEach(f => { %><li><%- ico('check', 18) %><span><%= f %></span></li><% }) %></ul>

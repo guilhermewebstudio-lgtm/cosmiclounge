@@ -17,7 +17,7 @@ module.exports = [
     files: ['public/js/**/*.js'],
     languageOptions: {
       sourceType: 'script',
-      globals: { ...globals.browser, gsap: 'readonly', ScrollTrigger: 'readonly' }
+      globals: { ...globals.browser }
     }
   },
   { ignores: ['node_modules/**'] }

@@ -5,7 +5,7 @@
     <h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)"><%= isNew ? 'Novo trabalho' : 'Editar trabalho' %></h1>
   </div>
 </section>
-<section class="section-tight" style="padding-top:0">
+<section class="section-tight" style="padding-top:32px">
   <div class="wrap" style="max-width:900px">
     <%- include('../partials/flash') %>
     <form method="post" action="<%= isNew ? '/admin/trabalhos' : '/admin/trabalhos/' + form.id %>" enctype="multipart/form-data">

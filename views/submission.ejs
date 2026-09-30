@@ -12,7 +12,7 @@
   </div>
 </section>
 
-<section class="section-tight" style="padding-top:0">
+<section class="section-tight" style="padding-top:32px">
   <div class="wrap" style="max-width:940px">
     <%- include('partials/flash') %>
     <% if (!['recusado', 'proposta_recusada'].includes(sub.status)) { %>
@@ -39,7 +39,7 @@
       </div>
     <% } %>
     <% if (sub.admin_note) { %>
-      <div class="panel"><h3>Mensagem da equipa</h3><p style="white-space:pre-line;margin:0;color:#c4cde0"><%= sub.admin_note %></p></div>
+      <div class="panel"><h3>Mensagem da equipa</h3><p style="white-space:pre-line;margin:0;color:var(--ink-2)"><%= sub.admin_note %></p></div>
     <% } %>
 
     <div class="panel">

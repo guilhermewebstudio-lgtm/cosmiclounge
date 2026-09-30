@@ -2,7 +2,7 @@
 <section class="page-hero" style="padding-bottom:24px">
   <div class="wrap"><h1 style="font-size:clamp(2.2rem,4.5vw,3.4rem)">Mensagens</h1></div>
 </section>
-<section class="section-tight" style="padding-top:0">
+<section class="section-tight" style="padding-top:32px">
   <div class="wrap" style="max-width:900px">
     <%- include('../partials/flash') %>
     <%- include('../partials/admin-nav') %>
@@ -13,8 +13,8 @@
           <span class="muted"><%= new Date(m.created_at).toLocaleString('pt-PT') %></span>
         </header>
         <div class="muted" style="font-size:.92rem">
-          <a href="mailto:<%= m.email %>" style="color:var(--gold-300)"><%= m.email %></a><% if (m.phone) { %> — <a href="tel:<%= m.phone.replace(/\s/g, "") %>"><%= m.phone %></a><% } %>
-          <% if (m.listing_title) { %><br>Imóvel: <a href="/imoveis/<%= m.listing_id %>" style="color:var(--gold-300)"><%= m.listing_title %></a><% } %>
+          <a href="mailto:<%= m.email %>" style="color:var(--gold-ink)"><%= m.email %></a><% if (m.phone) { %> — <a href="tel:<%= m.phone.replace(/\s/g, "") %>"><%= m.phone %></a><% } %>
+          <% if (m.listing_title) { %><br>Imóvel: <a href="/imoveis/<%= m.listing_id %>" style="color:var(--gold-ink)"><%= m.listing_title %></a><% } %>
         </div>
         <p><%= m.message %></p>
         <%

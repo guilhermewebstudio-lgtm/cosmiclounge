@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
     const { rows: featured } = await pool.query(
       `SELECT l.*, ${COVER} FROM listings l
        WHERE l.status IN ('disponivel','reservado')
-       ORDER BY l.featured DESC, l.id DESC LIMIT 4`
+       ORDER BY l.featured DESC, l.id DESC LIMIT 3`
     );
     const { rows: proj } = await pool.query(`SELECT p.*, ${BEFORE}, ${AFTER} FROM projects p ORDER BY p.id DESC LIMIT 1`);
     const { rows: cities } = await pool.query(

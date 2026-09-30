@@ -19,41 +19,23 @@
   <link rel="apple-touch-icon" href="/img/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/style.css?v=9">
-  <script>
-    (function () {
-      var d = document.documentElement;
-      d.classList.add('js');
-      setTimeout(function () { d.classList.remove('has-intro', 'has-curtain'); }, 9000);
-      try {
-        if (!sessionStorage.getItem('cl_intro')) d.classList.add('has-intro');
-        else if (sessionStorage.getItem('cl_t') === '1') d.classList.add('has-curtain');
-      } catch (e) {}
-    })();
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css?v=12">
 </head>
 <body class="page-<%= _page %><%= user ? ' is-in' : '' %><%= user && user.role === 'admin' ? ' is-admin' : '' %>">
 <a class="sr-only" href="#main">Saltar para o conteúdo</a>
-<canvas id="starfield" aria-hidden="true"></canvas>
-
-<div class="intro" id="intro" aria-hidden="true">
-  <div class="intro-stars" id="introStars"></div>
-  <div class="intro-inner">
-    <img class="intro-mark" id="introMark" src="/img/logo-mark.png" alt="">
-    <div class="intro-word" id="introWord"><span class="b">COSMIC</span><span>LOUNGE</span></div>
-    <div class="intro-line" id="introLine"></div>
-    <p class="intro-tag" id="introTag">Compra e venda de imóveis</p>
-  </div>
-</div>
-
-<div class="curtain" id="curtain" aria-hidden="true">
-  <div class="curtain-panel"></div><div class="curtain-panel"></div><div class="curtain-panel"></div><div class="curtain-panel"></div><div class="curtain-panel"></div>
-  <div class="curtain-mark"><img src="/img/logo-mark.png" alt=""></div>
-</div>
 
 <% if (!_bare) { %>
 <header class="site-header" id="header">
+  <div class="topbar">
+    <div class="wrap">
+      <div class="topbar-l">
+        <a href="tel:<%= company.phoneHref %>"><%- ico('phone', 14) %><%= company.phone %></a>
+        <a href="mailto:<%= company.email %>"><%- ico('mail', 14) %><%= company.email %></a>
+      </div>
+      <div class="topbar-r"><span><%- ico('clock', 14) %><%= company.hours %></span></div>
+    </div>
+  </div>
   <div class="wrap nav">
     <a class="brand" href="/" aria-label="CosmicLounge — página inicial">
       <img src="/img/logo-mark.png" alt="">
@@ -76,7 +58,7 @@
     </nav>
     <div class="nav-actions">
       <% if (user) { %>
-        <a class="btn btn-ghost btn-sm nav-auth" href="/conta"><%- ico('user', 16) %>A minha conta</a>
+        <a class="btn btn-ghost btn-sm nav-auth nav-account" href="/conta"><%- ico('user', 16) %>Conta</a>
         <form method="post" action="/logout" class="inline nav-auth"><button type="submit" class="btn btn-ghost btn-sm">Sair</button></form>
       <% } else { %>
         <a class="btn btn-ghost btn-sm nav-auth nav-login" href="/login"><%- ico('user', 16) %>Entrar</a>

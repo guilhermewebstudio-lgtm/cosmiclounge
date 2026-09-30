@@ -1,93 +1,56 @@
 <%- include('partials/head') %>
 
 <section class="hero" id="top">
-  <div class="wrap">
-    <div class="hero-grid">
-      <div class="hero-copy">
-        <h1 aria-label="Venda a sua casa. Nós fazemos o resto.">
-          <span class="line" data-hero="line">Venda a sua casa.</span>
-          <span class="line" data-hero="line">Nós fazemos o resto.</span>
-        </h1>
-        <p class="lead" data-hero="fade">A CosmicLounge compra o seu imóvel, remodela-o e volta a colocá-lo no mercado. Recebe uma proposta em 48 horas úteis, sem visitas nem intermediários.</p>
-        <form class="quote-box" action="/vender" method="get" data-hero="fade">
-          <label class="sr-only" for="hCidade">Localidade do imóvel</label>
-          <input class="input" id="hCidade" name="cidade" list="cidades" placeholder="Onde fica o imóvel?" autocomplete="off" value="<%= query.cidade || '' %>">
-          <datalist id="cidades">
-            <% ['Lisboa','Porto','Cascais','Oeiras','Almada','Sintra','Amadora','Setúbal','Braga','Coimbra'].forEach(c => { %><option value="<%= c %>"><% }) %>
-          </datalist>
-          <label class="sr-only" for="hTipo">Tipo de imóvel</label>
-          <select class="input" id="hTipo" name="tipo">
-            <option value="">Tipo de imóvel</option>
-            <% tipos.forEach(t => { %><option value="<%= t %>"><%= t %></option><% }) %>
-          </select>
-          <button class="btn btn-gold" type="submit">Pedir proposta</button>
-        </form>
-        <p class="quote-note" data-hero="fade">Grátis e sem compromisso. Precisa de uma conta para acompanhar o pedido.</p>
-      </div>
-
-      <div class="constellation" id="constellation" aria-hidden="true">
-        <svg viewBox="0 0 520 480" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="goldLine" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#f6e7bd"/><stop offset=".55" stop-color="#d4af6a"/><stop offset="1" stop-color="#a97f3a"/>
-            </linearGradient>
-            <radialGradient id="glow"><stop offset="0" stop-color="#f6e7bd" stop-opacity=".7"/><stop offset="1" stop-color="#f6e7bd" stop-opacity="0"/></radialGradient>
-            <path id="starp" d="M0-10 L2.4-2.4 L10 0 L2.4 2.4 L0 10 L-2.4 2.4 L-10 0 L-2.4-2.4Z"/>
-          </defs>
-
-          <ellipse class="c-orbit" id="orbit" cx="260" cy="250" rx="268" ry="92" transform="rotate(-30 260 250)"/>
-
-          <g id="cLines">
-            <path class="c-line" d="M260 52 L470 236 L412 236 L412 430 L108 430 L108 236 L50 236 Z"/>
-            <path class="c-line" d="M212 430 V330 H308 V430"/>
-            <path class="c-line" style="stroke-width:1" d="M150 140 V92 H188 V118"/>
-            <path class="c-line" style="stroke-width:1;opacity:.7" d="M170 290 L220 262 L268 274 L312 236 L352 262"/>
-          </g>
-
-          <g id="cNodes">
-            <g transform="translate(260 52) scale(1.5)"><circle class="c-glow" r="16"/><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(470 236)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(50 236)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(412 430) scale(.8)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(108 430) scale(.8)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(268 274) scale(1.1)"><circle class="c-glow" r="18"/><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(312 236) scale(.7)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(220 262) scale(.6)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(170 290) scale(.5)"><use href="#starp" class="c-star tw"/></g>
-            <g transform="translate(352 262) scale(.55)"><use href="#starp" class="c-star tw"/></g>
-            <circle class="c-dot tw" cx="188" cy="118" r="2"/><circle class="c-dot tw" cx="150" cy="92" r="1.6"/>
-            <circle class="c-dot tw" cx="212" cy="330" r="2"/><circle class="c-dot tw" cx="308" cy="330" r="2"/>
-            <circle class="c-dot tw" cx="412" cy="236" r="2"/><circle class="c-dot tw" cx="108" cy="236" r="2"/>
-            <circle class="c-dot tw" cx="380" cy="110" r="1.3"/><circle class="c-dot tw" cx="120" cy="80" r="1.3"/>
-            <circle class="c-dot tw" cx="470" cy="330" r="1.5"/><circle class="c-dot tw" cx="40" cy="380" r="1.5"/>
-          </g>
-
-          <g id="planet">
-            <circle class="c-glow" r="26"/>
-            <circle r="8" fill="#e6c887"/>
-            <circle r="8" fill="url(#goldLine)" opacity=".9"/>
-            <ellipse rx="17" ry="4.6" fill="none" stroke="#f1dba5" stroke-width="1.4" transform="rotate(-18)"/>
-          </g>
-        </svg>
-      </div>
+  <div class="wrap hero-grid">
+    <div>
+      <h1><span style="display:block">Venda a sua casa.</span><span style="display:block">Nós fazemos o resto.</span></h1>
+      <p class="lead">A CosmicLounge compra o seu imóvel, remodela-o e volta a colocá-lo no mercado. Sem visitas, sem intermediários e sem esperar por um comprador.</p>
+      <ul class="ticks">
+        <li><%- ico('check', 20) %><span>Proposta de compra em 48 horas úteis</span></li>
+        <li><%- ico('check', 20) %><span>Sem comissões nem custos de mediação</span></li>
+        <li><%- ico('check', 20) %><span>Pagamento no dia da escritura</span></li>
+      </ul>
     </div>
 
-    <div class="hero-facts" data-hero="fade">
-      <div><strong>48 horas úteis</strong><span>para receber a sua proposta</span></div>
-      <div><strong>Pagamento na escritura</strong><span>sem esperar por um comprador</span></div>
-      <div><strong>Sem comissões</strong><span>não há intermediários no negócio</span></div>
-    </div>
+    <form class="quote-card" action="/vender" method="get">
+      <h2>Peça a sua proposta</h2>
+      <p>Grátis e sem compromisso. Demora cerca de cinco minutos.</p>
+      <div class="field">
+        <label for="hCidade">Onde fica o imóvel?</label>
+        <input class="input" id="hCidade" name="cidade" list="cidades" placeholder="Ex.: Lisboa" autocomplete="off" value="<%= query.cidade || '' %>">
+        <datalist id="cidades">
+          <% ['Lisboa','Porto','Cascais','Oeiras','Almada','Sintra','Amadora','Setúbal','Braga','Coimbra'].forEach(c => { %><option value="<%= c %>"><% }) %>
+        </datalist>
+      </div>
+      <div class="field">
+        <label for="hTipo">Tipo de imóvel</label>
+        <select class="input" id="hTipo" name="tipo">
+          <option value="">Escolha…</option>
+          <% tipos.forEach(t => { %><option value="<%= t %>"><%= t %></option><% }) %>
+        </select>
+      </div>
+      <button class="btn btn-gold btn-block" type="submit" style="padding:14px 24px;font-size:1.05rem">Pedir proposta grátis</button>
+      <p class="quote-note">Precisa de uma conta para acompanhar o pedido.</p>
+    </form>
   </div>
 </section>
 
-<section class="section" id="como-funciona">
+<section class="strip" aria-label="Vantagens">
+  <div class="wrap">
+    <div class="fact"><%- ico('clock', 26) %><div><strong>48 horas úteis</strong><span>para receber a sua proposta</span></div></div>
+    <div class="fact"><%- ico('lock', 26) %><div><strong>Pagamento na escritura</strong><span>sem esperar por um comprador</span></div></div>
+    <div class="fact"><%- ico('home', 26) %><div><strong>Sem comissões</strong><span>não há intermediários no negócio</span></div></div>
+  </div>
+</section>
+
+<section class="section bg-soft" id="como-funciona">
   <div class="wrap">
     <div class="section-head">
-      <h2>Do primeiro contacto à escritura em quatro passos</h2>
-      <p class="lead">Não precisa de fotografar, anunciar nem receber visitas. Nós tratamos de tudo, e o processo pode ser acompanhado online.</p>
+      <span class="eyebrow">Como funciona</span>
+      <h2>Da primeira mensagem à escritura em quatro passos</h2>
+      <p class="lead">Não precisa de fotografar, anunciar nem receber visitas. Nós tratamos de tudo, e pode acompanhar o processo online.</p>
     </div>
-    <div class="steps" id="steps">
-      <div class="steps-track" aria-hidden="true"><div class="steps-fill" id="stepsFill"></div><div class="steps-planet" id="stepsPlanet"></div></div>
+    <div class="steps">
       <div class="step"><span class="step-n">1</span><h3>Submeta o imóvel</h3><p>Preencha o formulário com os dados e algumas fotografias. Demora cerca de cinco minutos.</p></div>
       <div class="step"><span class="step-n">2</span><h3>Receba a proposta</h3><p>Avaliamos o imóvel e enviamos-lhe uma proposta de compra em 48 horas úteis.</p></div>
       <div class="step"><span class="step-n">3</span><h3>Escritura</h3><p>Se aceitar, tratamos da documentação e do pagamento no dia da escritura.</p></div>
@@ -96,19 +59,18 @@
   </div>
 </section>
 
-<section class="section-tight" id="imoveis-destaque">
+<section class="section" id="imoveis-destaque">
   <div class="wrap">
     <div class="section-foot">
       <div class="section-head" style="margin:0">
+        <span class="eyebrow">Imóveis à venda</span>
         <h2>Casas remodeladas pela CosmicLounge</h2>
       </div>
       <a class="btn btn-ghost" href="/imoveis">Ver todos os imóveis</a>
     </div>
     <% if (featured.length) { %>
-    <div class="listing-grid">
-      <% featured.forEach((l, i) => { %>
-        <%- include('partials/lcard', { l: l, variant: i === 0 ? 'l-big' : 'l-side' }) %>
-      <% }) %>
+    <div class="list-cards">
+      <% featured.forEach((l) => { %><%- include('partials/lcard', { l: l, variant: '' }) %><% }) %>
     </div>
     <% } else { %>
     <div class="empty"><h3>Novos imóveis a caminho</h3><p>Estamos a terminar as próximas remodelações. Volte em breve.</p></div>
@@ -117,16 +79,16 @@
 </section>
 
 <% if (project) { %>
-<section class="section-tight" id="antes-depois">
+<section class="section bg-soft" id="antes-depois">
   <div class="wrap">
     <div class="work">
       <div class="work-media"><%- include('partials/ba', { p: project }) %></div>
       <div class="work-info">
-        <span class="lcard-city"><%- ico('pin', 15) %><%= project.city %> · <%= project.tipo %></span>
+        <span class="eyebrow">Antes e depois</span>
         <h2>Veja a transformação</h2>
-        <p class="lead" style="font-size:1.1rem"><%= project.title %></p>
-        <p class="muted">Arraste o cursor para comparar o antes e o depois. Cada casa que compramos é remodelada pela nossa equipa antes de ir para o mercado.</p>
-        <p style="margin-top:22px"><a class="btn btn-ghost" href="/trabalhos">Ver todos os trabalhos</a></p>
+        <p class="lead" style="font-size:1.08rem"><%= project.title %></p>
+        <p class="muted">Arraste o cursor para comparar. Cada casa que compramos é remodelada pela nossa equipa antes de ir para o mercado.</p>
+        <p style="margin-top:20px"><a class="btn btn-navy" href="/trabalhos">Ver todos os trabalhos</a></p>
       </div>
     </div>
   </div>
@@ -136,30 +98,29 @@
 <section class="section" id="sobre-nos">
   <div class="wrap about-grid">
     <div>
-      <h2>Uma casa parada perde valor. Nós <span class="nowrap">devolvemos-lhe</span> vida.</h2>
-      <p class="lead" style="margin-top:22px">A CosmicLounge nasceu para simplificar a venda de casas em Portugal. Compramos diretamente, investimos na remodelação e vendemos a quem procura uma casa pronta a habitar.</p>
+      <span class="eyebrow">Sobre nós</span>
+      <h2>Uma casa parada perde valor. Nós devolvemos-lhe vida.</h2>
+      <p class="lead" style="margin-top:18px">A CosmicLounge nasceu para simplificar a venda de casas em Portugal. Compramos diretamente, investimos na remodelação e vendemos a quem procura uma casa pronta a habitar.</p>
       <ul class="principles">
         <li><strong>Transparência</strong><span>A proposta é clara e sem custos escondidos. Sabe exatamente quanto recebe e quando.</span></li>
         <li><strong>Rapidez</strong><span>Respondemos em 48 horas úteis e acompanhamos o processo até à escritura.</span></li>
         <li><strong>Qualidade</strong><span>Cada imóvel é remodelado com materiais e equipas de confiança antes de ser vendido.</span></li>
       </ul>
-      <p style="margin-top:32px"><a class="btn btn-ghost" href="/sobre">Conhecer a CosmicLounge</a></p>
+      <p style="margin-top:28px"><a class="btn btn-ghost" href="/sobre">Conhecer a CosmicLounge</a></p>
     </div>
-    <div class="frame">
-      <%- include('partials/brand-art') %>
-    </div>
+    <div class="frame"><%- include('partials/brand-art') %></div>
   </div>
 </section>
 
-<section class="section-tight" id="perguntas">
+<section class="section bg-soft" id="perguntas">
   <div class="wrap">
-    <div class="section-head"><h2>Perguntas frequentes</h2></div>
+    <div class="section-head"><span class="eyebrow">Perguntas frequentes</span><h2>Tem dúvidas? Respondemos aqui</h2></div>
     <div class="faq">
       <details><summary>Quem compra o meu imóvel?</summary><div>A compra é feita diretamente pela CosmicLounge. Não há leilões nem interessados a disputar o preço: a proposta que recebe é a da própria empresa.</div></details>
       <details><summary>Quanto tempo demora até receber uma proposta?</summary><div>Respondemos normalmente em 48 horas úteis depois de recebermos o pedido com os dados e as fotografias do imóvel.</div></details>
       <details><summary>Que tipos de imóvel compram?</summary><div>Apartamentos, moradias, lojas e terrenos, sobretudo os que precisam de obras. Se tiver dúvidas sobre o seu caso, fale connosco antes de submeter.</div></details>
       <details><summary>Tenho de pagar alguma comissão?</summary><div>Não. Como somos nós a comprar, não há mediação nem comissão a pagar por parte de quem vende.</div></details>
-      <details><summary>E se não aceitar a proposta?</summary><div>Sem qualquer compromisso. Pode recusar ou pedir que reavaliemos o valor, e o pedido fica guardado na sua conta.</div></details>
+      <details><summary>E se não aceitar a proposta?</summary><div>Sem qualquer compromisso. Pode recusar e o pedido fica guardado na sua conta.</div></details>
     </div>
   </div>
 </section>

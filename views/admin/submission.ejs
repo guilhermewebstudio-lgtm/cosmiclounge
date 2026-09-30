@@ -14,7 +14,7 @@
   </div>
 </section>
 
-<section class="section-tight" style="padding-top:0">
+<section class="section-tight" style="padding-top:32px">
   <div class="wrap" style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start" id="adminSub">
     <div>
       <%- include('../partials/flash') %>
@@ -32,7 +32,7 @@
 
         <% if (_s === 'recebido' || _s === 'em_analise') { %>
           <h2>Envie uma proposta de compra</h2>
-          <p class="muted">Veja os dados e as fotografias ao lado e diga quanto a CosmicLounge oferece.<% if (sub.asking_price) { %> O cliente pretende <strong style="color:var(--gold-300)"><%= euro.format(sub.asking_price) %></strong>.<% } %> O cliente recebe um email.</p>
+          <p class="muted">Veja os dados e as fotografias ao lado e diga quanto a CosmicLounge oferece.<% if (sub.asking_price) { %> O cliente pretende <strong style="color:var(--gold-ink)"><%= euro.format(sub.asking_price) %></strong>.<% } %> O cliente recebe um email.</p>
           <form method="post" action="/admin/pedidos/<%= sub.id %>/acao">
             <input type="hidden" name="acao" value="enviar_proposta">
             <div class="field"><label for="offer_price">Valor da proposta (€)</label><input class="input" id="offer_price" name="offer_price" inputmode="numeric" required placeholder="Ex.: 210000" value="<%= sub.offer_price || '' %>"></div>
@@ -50,7 +50,7 @@
 
         <% } else if (_s === 'proposta_enviada') { %>
           <h2>À espera da resposta do cliente</h2>
-          <p class="muted">Enviou uma proposta de <strong style="color:var(--gold-300)"><%= euro.format(sub.offer_price || 0) %></strong>. O cliente pode aceitá-la ou recusá-la na conta dele. Se ele responder por telefone ou email, registe aqui:</p>
+          <p class="muted">Enviou uma proposta de <strong style="color:var(--gold-ink)"><%= euro.format(sub.offer_price || 0) %></strong>. O cliente pode aceitá-la ou recusá-la na conta dele. Se ele responder por telefone ou email, registe aqui:</p>
           <div class="actions">
             <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="aceitou"><button class="btn btn-gold" type="submit">O cliente aceitou</button></form>
             <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="cliente_recusou"><button class="btn btn-danger" type="submit">O cliente recusou</button></form>
@@ -67,7 +67,7 @@
 
         <% } else if (_s === 'proposta_aceite') { %>
           <h2>Tratar da escritura</h2>
-          <p class="muted">O cliente aceitou a proposta de <strong style="color:var(--gold-300)"><%= euro.format(sub.offer_price || 0) %></strong>. Combine a escritura com ele (contacto ao lado). Quando estiver concluída, marque como comprado.</p>
+          <p class="muted">O cliente aceitou a proposta de <strong style="color:var(--gold-ink)"><%= euro.format(sub.offer_price || 0) %></strong>. Combine a escritura com ele (contacto ao lado). Quando estiver concluída, marque como comprado.</p>
           <form method="post" action="/admin/pedidos/<%= sub.id %>/acao"><input type="hidden" name="acao" value="comprado"><button class="btn btn-gold" type="submit">Escritura feita, marcar como comprado</button></form>
 
         <% } else if (_s === 'comprado') { %>
@@ -116,7 +116,7 @@
         <h3>Cliente</h3>
         <dl class="kv">
           <dt>Nome</dt><dd><%= sub.user_name %></dd>
-          <dt>Email</dt><dd><a href="mailto:<%= sub.user_email %>" style="color:var(--gold-300)"><%= sub.user_email %></a></dd>
+          <dt>Email</dt><dd><a href="mailto:<%= sub.user_email %>" style="color:var(--gold-ink)"><%= sub.user_email %></a></dd>
           <% if (sub.user_phone) { %><dt>Telemóvel</dt><dd><a href="tel:<%= sub.user_phone %>"><%= sub.user_phone %></a></dd><% } %>
         </dl>
       </div>

@@ -44,9 +44,8 @@
       </ul>
     </div>
   </div>
-  <div class="footer-giant" aria-hidden="true">CosmicLounge</div>
   <div class="footer-bottom">
-    <div class="wrap" style="display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;width:min(var(--wrap),100% - 48px)">
+    <div class="wrap">
       <span>© <%= new Date().getFullYear() %> CosmicLounge. Todos os direitos reservados.</span>
       <nav>
         <a href="https://www.livroreclamacoes.pt" target="_blank" rel="noopener" data-no-transition>Livro de Reclamações</a>
@@ -77,9 +76,7 @@
 <% } %>
 
 <% if (!_bareF) { %><script>window.__co = <%- JSON.stringify({ phone: company.phone, email: company.email, hours: company.hours }).replace(/</g, '\\u003c') %>;</script><% } %>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
-<script src="/js/app.js?v=3" defer></script>
+<script src="/js/app.js?v=4" defer></script>
 <% if (!_bareF) { %><script src="/js/chatbot.js?v=2" defer></script><% } %>
 </body>
 </html>
