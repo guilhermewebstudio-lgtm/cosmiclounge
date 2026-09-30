@@ -9,7 +9,7 @@
 <section class="section-tight" style="padding-top:32px">
   <div class="wrap detail-grid">
     <div>
-      <div class="gallery" id="gallery">
+      <div class="gallery" id="gallery" data-credits="<%= JSON.stringify(images.map(im => im.credit_name ? { n: im.credit_name, u: im.credit_url } : null)) %>">
         <div class="gallery-main" id="galleryMain">
           <% if (images.length) { %>
             <div class="cover"><img id="galleryImg" src="/img/<%= images[0].id %>" alt="<%= listing.title %>"></div>
@@ -23,6 +23,7 @@
             <%- include('partials/cover', { item: listing, alt: listing.title }) %>
           <% } %>
         </div>
+        <p class="g-credit" id="gCredit"></p>
         <% if (images.length > 1) { %>
         <div class="gallery-thumbs" id="gThumbs">
           <% images.forEach((im, i) => { %>

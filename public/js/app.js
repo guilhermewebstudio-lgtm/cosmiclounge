@@ -82,7 +82,26 @@
     var srcs = thumbBtns.length ? thumbBtns.map(function (t) { return t.getAttribute('data-src'); }) : [big.getAttribute('src')];
     var total = srcs.length;
     var countTxt = document.getElementById('gCountTxt');
+    var creditEl = document.getElementById('gCredit');
+    var credits = [];
+    try { credits = JSON.parse(root.getAttribute('data-credits') || '[]'); } catch { credits = []; }
     var cur = 0;
+
+    function showCredit(i) {
+      if (!creditEl) return;
+      var c = credits[i];
+      creditEl.textContent = '';
+      if (!c) return;
+      creditEl.appendChild(document.createTextNode('Fotografia de '));
+      var a = document.createElement('a');
+      a.href = c.u; a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.n;
+      creditEl.appendChild(a);
+      creditEl.appendChild(document.createTextNode(' no '));
+      var b = document.createElement('a');
+      b.href = 'https://unsplash.com/?utm_source=cosmiclounge&utm_medium=referral'; b.target = '_blank'; b.rel = 'noopener'; b.textContent = 'Unsplash';
+      creditEl.appendChild(b);
+      creditEl.appendChild(document.createTextNode(' (imagem de exemplo)'));
+    }
 
     function preload(i) { var im = new Image(); im.src = srcs[(i + total) % total]; }
     function show(i) {
@@ -90,6 +109,7 @@
       big.src = srcs[cur];
       thumbBtns.forEach(function (t, k) { t.classList.toggle('is-on', k === cur); });
       if (countTxt) countTxt.textContent = (cur + 1) + ' / ' + total;
+      showCredit(cur);
       if (thumbBtns[cur] && thumbBtns[cur].scrollIntoView && total > 6) thumbBtns[cur].scrollIntoView({ block: 'nearest', inline: 'nearest' });
       preload(cur + 1); preload(cur - 1);
       syncLightbox();
@@ -164,6 +184,7 @@
     }
     swipe(document.getElementById('galleryMain'));
     swipe(lb.querySelector('.lb-stage'));
+    showCredit(0);
     preload(1);
   }
 

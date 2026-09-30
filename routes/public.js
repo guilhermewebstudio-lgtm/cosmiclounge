@@ -77,7 +77,7 @@ router.get('/imoveis/:id(\\d+)', async (req, res, next) => {
     const listing = rows[0];
     if (!listing) return next();
     const { rows: images } = await pool.query(
-      `SELECT id FROM images WHERE owner_type='listing' AND owner_id=$1 ORDER BY position, id`,
+      `SELECT id, credit_name, credit_url FROM images WHERE owner_type='listing' AND owner_id=$1 ORDER BY position, id`,
       [listing.id]
     );
     const { rows: related } = await pool.query(
@@ -184,8 +184,12 @@ router.post('/contacto', rateLimit('contact', 6, 15 * 60 * 1000), async (req, re
 // Imagens guardadas na base de dados
 router.get('/img/:id(\\d+)', async (req, res, next) => {
   try {
-    const { rows } = await pool.query('SELECT mime, data FROM images WHERE id = $1', [req.params.id]);
+    const { rows } = await pool.query('SELECT mime, data, url FROM images WHERE id = $1', [req.params.id]);
     if (!rows[0]) return next();
+    if (rows[0].url) {
+      res.set('Cache-Control', 'public, max-age=86400');
+      return res.redirect(302, rows[0].url);
+    }
     res.set('Content-Type', rows[0].mime);
     res.set('Cache-Control', 'public, max-age=2592000, immutable');
     res.send(rows[0].data);
